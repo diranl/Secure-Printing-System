@@ -2,6 +2,7 @@
 #Struct is used to create the actual bytes.
 #It is super handy for this type of thing.
 import struct, random, copy
+import Image
 
 # basis_matrix: returns the basis matrix for of order n
 def basis_matrix(n):
@@ -95,6 +96,9 @@ def bmp_write(d, byte, filename):
                 colorplanes+colordepth+compression+imagesize+res_hor+res_vert+\
                 palette+importantcolors+byte)
   outfile.close()
+  # Converting into PNG
+  img = Image.open(filename + '.bmp')
+  img.save(filename + '.png')
 
 def bmp_driver(bmp_matrix, filename):
   #Here is a minimal dictionary with header values.
