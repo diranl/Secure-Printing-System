@@ -1,10 +1,10 @@
 /* Inspired from: http://introcs.cs.princeton.edu/java/95linear/Matrix.java.html */
-import java.util.Random
+import java.util.Random;
 
 final public class Matrix {
   public final int row;
   public final int col;
-  public final short[][] matrix;
+  public final int[][] matrix;
 
   private final int TYPE_XOR = 0;
   private final int TYPE_OR  = 1;
@@ -12,24 +12,24 @@ final public class Matrix {
   public Matrix(int row, int col) {
     this.row = row;
     this.col = col;
-    matrix = new short[row][col];
+    matrix = new int[row][col];
   } 
 
   public static Matrix random(int row, int col) {
     Random rand = new Random();
-    Matrix A = Matrix(row, col);
+    Matrix A = new Matrix(row, col);
     for (int i=0; i<row; i++) {
       for (int j=0; j<col; j++) {
-        A.matrix[i][j] = randomGenerator.nextInt(1);
+        A.matrix[i][j] = rand.nextInt(2);
       }
     }
     return A;
   }
   
-  private Matrix _op(int type) {
+  private Matrix _op(int type, Matrix B) {
     Matrix A = this;
     if (B.row != A.row || B.col != A.col) throw new RuntimeException("Illegal matrix dimensions.");
-    Matrix C = Matrix(row, col);
+    Matrix C = new Matrix(row, col);
     for (int i=0; i<row; i++) {
       for (int j=0; j<col; j++) {
         if (type == TYPE_XOR)      C.matrix[i][j] = A.matrix[i][j] ^ B.matrix[i][j];
@@ -41,10 +41,20 @@ final public class Matrix {
   }
 
   public Matrix xor(Matrix B) {
-    return _op(TYPE_XOR);
+    return _op(TYPE_XOR, B);
   }
   
   public Matrix or(Matrix B) {
-    return _op(TYPE_OR);
+    return _op(TYPE_OR, B);
+  }
+
+  public void print() {
+    // Print out of matrix row by row
+    for (int i=0; i<row; i++) {
+      for (int j=0; j<row; j++) {
+        System.out.print(matrix[i][j] + " ");
+      }
+      System.out.print('\n');
+    }
   }
 }
