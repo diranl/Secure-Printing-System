@@ -63,11 +63,6 @@ class SecurePrinting {
 
     Matrix alphaPxlMap = generatePixelMap(alpha, 0, 2);
     Matrix betaPxlMap = generatePixelMap(beta, 1, 2);
-    /*DEBUG
-    alphaPxlMap.print();
-    System.out.println("\n");
-    betaPxlMap.print();
-    */
     Matrix secretPxlMap = alphaPxlMap.XOR(betaPxlMap);
     Matrix overlayedPxlMap = alphaPxlMap.OR(betaPxlMap);
 
