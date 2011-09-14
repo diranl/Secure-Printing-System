@@ -4,7 +4,7 @@ import java.util.Random;
 final public class Matrix {
   public final int row;
   public final int col;
-  public final int[][] matrix;
+  public int[][] matrix;
 
   private final int TYPE_XOR = 0;
   private final int TYPE_OR  = 1;
@@ -29,22 +29,22 @@ final public class Matrix {
   private Matrix _op(int type, Matrix B) {
     Matrix A = this;
     if (B.row != A.row || B.col != A.col) throw new RuntimeException("Illegal matrix dimensions.");
-    Matrix C = new Matrix(row, col);
-    for (int i=0; i<row; i++) {
-      for (int j=0; j<col; j++) {
+    Matrix C = new Matrix(this.row, this.col);
+    for (int i=0; i<this.row; i++) {
+      for (int j=0; j<this.col; j++) {
         if (type == TYPE_XOR)      C.matrix[i][j] = A.matrix[i][j] ^ B.matrix[i][j];
-        else if (type == TYPE_XOR) C.matrix[i][j] = A.matrix[i][j] | B.matrix[i][j];
+        else if (type == TYPE_OR)  C.matrix[i][j] = A.matrix[i][j] | B.matrix[i][j];
         else throw new RuntimeException("Invalid type parameter for _op");
       }
     }
     return C;
   }
 
-  public Matrix xor(Matrix B) {
+  public Matrix XOR(Matrix B) {
     return _op(TYPE_XOR, B);
   }
   
-  public Matrix or(Matrix B) {
+  public Matrix OR(Matrix B) {
     return _op(TYPE_OR, B);
   }
 
