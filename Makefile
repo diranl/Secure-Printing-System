@@ -14,7 +14,7 @@ JFLAGS = -g
 # typing 'make' will invoke the first target entry in the makefile 
 # (the default one in this case)
 #
-default: Bitmap.class BasisMatrix.class Matrix.class SecurePrinting.class ex.class
+default: Bitmap.class BasisMatrix.class Matrix.class SecurePrinting.class
 
 # this target entry builds the Average class
 # the Average.class file is dependent on the Average.java file
@@ -31,9 +31,6 @@ Matrix.class: Matrix.java
 
 SecurePrinting.class: SecurePrinting.java
 	$(JCC) $(JFLAGS) SecurePrinting.java
-
-ex.class: ex.java
-	$(JCC) $(JFLAGS) ex.java
 
 # To start over from scratch, type 'make clean'.  
 # Removes all .class files, so that the next make rebuilds them
