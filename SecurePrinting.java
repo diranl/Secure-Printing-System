@@ -2,32 +2,14 @@ import java.io.IOException;
 
 class SecurePrinting {
 
-  public static Matrix basisMatrix(int n) {
-    BasisMatrix basis = new BasisMatrix(n);
-    return basis;
-  }
+  public static Matrix generatePixelMap(Matrix secret, int partyIdx, int partyNum) {
+    BasisMatrix basis = new BasisMatrix(partyNum);
+    int[] dim = basis.pxlDim();
 
-  public static Matrix generatePixel(int bit, int party, int partyNum) {
-    Matrix basis = basisMatrix(2);
-    int[] row = basis.matrix[party];
-    if (bit == 1) {
-      for (int i=0; i<row.length; i++) {
-        row[i] = row[i] ^ 1;
-      }
-    }
-    Matrix pixel = new Matrix(row.length, row.length);
-
-    pixel.matrix[0] = (int[])row.clone();
-    pixel.matrix[1] = (int[])row.clone();
-    return pixel;
-  }
-
-  public static Matrix generatePixelMap(Matrix secret, int party, int partyNum) {
-    //FIXME: hard-coded for two-party squaring 
-    Matrix pixelMap = new Matrix(secret.row * 2/*hard-coded for two party*/, secret.col * 2/*hard-coded for two party*/);
+    Matrix pixelMap = new Matrix(secret.row * dim[0], secret.col * dim[1]);
     for (int i=0; i<secret.row; i++) {
       for (int j=0; j<secret.col; j++) {
-        Matrix pixel = generatePixel(secret.matrix[i][j], party, partyNum);
+        Matrix pixel = basis.retrieve(partyIdx, secret.matrix[i][j]);
         // Merging of matrices using pixel
         for (int pxlRow=0, pxlMapRow=i*2; pxlRow<pixel.row; pxlRow++) {
           for (int pxlCol=0, pxlMapCol=j*2; pxlCol<pixel.col; pxlCol++) {

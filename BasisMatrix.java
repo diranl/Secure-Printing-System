@@ -3,9 +3,10 @@ import java.util.Stack;
 public class BasisMatrix extends Matrix {
   public BasisMatrix(int n) {
     super(n, (int)Math.pow(2, n-1));
+    permute();
   }
 
-  public void permute() {
+  private void permute() {
     Stack<Integer> stack = new Stack<Integer>();
 
     /* Loop through with powers of two increments to generate the permuations
@@ -59,5 +60,43 @@ public class BasisMatrix extends Matrix {
         }
       }
     }
+  }
+
+  /* _findSquare: returns a two-tuple (rowsize, colsize)*/
+  private Matrix _square(int[] row) {
+    int rowSize = 1, colSize = row.length;
+    for (; rowSize*2 <= colSize/2; rowSize*=2, colSize/=2) {}
+
+    Matrix square; 
+    if (rowSize == colSize) {
+      // Perfect square 
+      square = new Matrix(rowSize, colSize);
+      for (int rowIdx=0, colIdx=0, idx=0; idx<row.length; colIdx++, idx++) {
+        if (colIdx == colSize) { colIdx = 0; rowIdx++; }
+        square.matrix[rowIdx][colIdx] = row[idx];
+      }
+    } else {
+      // Needs squaring through doubling
+      square = new Matrix(rowSize*2, colSize);
+      for (int rowIdx=0, colIdx=0, idx=0; idx<row.length*2; colIdx++, idx++) {
+        if (colIdx == colSize)  { colIdx = 0; rowIdx++; }
+        square.matrix[rowIdx][colIdx] = row[idx % row.length];
+      }
+    }
+    return square;
+  }
+
+  public Matrix retrieve(int rowIdx, int bit) {
+    int[] row = super.matrix[rowIdx];
+    if (bit == 1) { for (int i=0; i<row.length; i++) row[i] = row[i] ^ 1; }
+    return _square(row);
+  }
+
+  public int[] pxlDim() {
+    int rowSize = 1, colSize = super.col;
+    for (; rowSize*2 <= colSize/2; rowSize*=2, colSize/=2) {}
+    if (rowSize != colSize) rowSize *= 2;
+    int[] dim = {rowSize, colSize};
+    return dim;
   }
 }
