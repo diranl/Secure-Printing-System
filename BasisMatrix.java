@@ -31,7 +31,10 @@ public class BasisMatrix extends Matrix {
         pivot++;
         stack.push(pivot);
 
-        while (stack.size() < inserts-1) stack.push(pivot++);
+        while (stack.size() < inserts-1) {
+          pivot++;
+          stack.push(pivot);
+        }
 
         for (int variant=pivot+1; variant<super.row; variant++) {
           // add values into matrix
