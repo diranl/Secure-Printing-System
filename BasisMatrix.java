@@ -1,5 +1,4 @@
 import java.util.Stack;
-import java.util.Iterator;
 
 public class BasisMatrix extends Matrix {
   public BasisMatrix(int n) {
@@ -7,8 +6,6 @@ public class BasisMatrix extends Matrix {
   }
 
   public void permute() {
-    System.out.println("row: " + super.row + ", col: " + super.col);
-    super.print();
     Stack<Integer> stack = new Stack<Integer>();
 
     int colIdx = 1; /* Keep first column of zeros, start inserting into second */
@@ -30,30 +27,19 @@ public class BasisMatrix extends Matrix {
         }
 
         if (stack.empty()) break;
-
-        System.out.println("stack:" + stack);
-        System.out.println("inserts:" + inserts);
         pivot = stack.pop();
         pivot++;
         stack.push(pivot);
 
         while (stack.size() < inserts-1) stack.push(pivot++);
-        System.out.println("row:" + super.row);
 
         for (int variant=pivot+1; variant<super.row; variant++) {
           // add values into matrix
-          System.out.println("variant val:" + variant);
-          System.out.println("colIdx:" + colIdx);
           super.matrix[variant][colIdx] = 1;
-          System.out.println("stack:" + stack);
           for (Integer rowIdx : stack) super.matrix[rowIdx][colIdx] = 1;
           colIdx++;
         }
       }
     }
-  }
-
-  private void _permutation(int colIdx, int rowIdx, int insertions) {
-    
   }
 }
