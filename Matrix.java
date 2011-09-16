@@ -1,7 +1,7 @@
 /* Inspired from: http://introcs.cs.princeton.edu/java/95linear/Matrix.java.html */
 import java.util.Random;
 
-final public class Matrix {
+public class Matrix {
   public final int row;
   public final int col;
   public int[][] matrix;
@@ -12,7 +12,7 @@ final public class Matrix {
   public Matrix(int row, int col) {
     this.row = row;
     this.col = col;
-    matrix = new int[row][col];
+    matrix = new int[row][col];   /*Default values: 0*/
   } 
 
   public static Matrix random(int row, int col) {
@@ -51,10 +51,11 @@ final public class Matrix {
   public void print() {
     // Print out of matrix row by row
     for (int i=0; i<row; i++) {
-      for (int j=0; j<row; j++) {
+      for (int j=0; j<col; j++) {
         System.out.print(matrix[i][j] + " ");
       }
       System.out.print('\n');
     }
   }
 }
+

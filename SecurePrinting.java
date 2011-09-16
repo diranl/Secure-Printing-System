@@ -1,12 +1,9 @@
 import java.io.IOException;
 
 class SecurePrinting {
+
   public static Matrix basisMatrix(int n) {
-    //TODO: Generalize to higher dimensions
-    Matrix basis = new Matrix(2,2);
-    int[][] tmp = {{0,1}, 
-                   {0,1}};
-    basis.matrix = tmp;
+    BasisMatrix basis = new BasisMatrix(n);
     return basis;
   }
 
@@ -41,8 +38,6 @@ class SecurePrinting {
     }
     return pixelMap;
   }
-
-  public void generatePermutations(int n, int m) {}
 
   public static Matrix generateSecret() {
     Matrix secret = new Matrix(6,6);
