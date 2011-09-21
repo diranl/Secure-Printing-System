@@ -1,6 +1,19 @@
 import java.io.IOException;
+import java.util.ArrayList;
 
 class SecurePrinting {
+
+  public static Matrix generateSecret() {
+    Matrix secret = new Matrix(6,6);
+    int[][] tmp = {{0,0,1,1,0,0},
+                   {0,1,1,1,1,0},
+                   {1,1,0,0,1,1},
+                   {1,1,0,0,1,1},
+                   {0,1,1,0,1,1},
+                   {0,0,1,1,0,0}};
+    secret.matrix = tmp;
+    return secret;
+  }
 
   public static Matrix generatePixelMap(Matrix secret, int partyIdx, int partyNum) {
     BasisMatrix basis = new BasisMatrix(partyNum);
@@ -20,37 +33,47 @@ class SecurePrinting {
     }
     return pixelMap;
   }
-
-  public static Matrix generateSecret() {
-    Matrix secret = new Matrix(6,6);
-    int[][] tmp = {{0,0,1,1,0,0},
-                   {0,1,1,1,1,0},
-                   {1,1,0,0,1,1},
-                   {1,1,0,0,1,1},
-                   {0,1,1,0,1,1},
-                   {0,0,1,1,0,0}};
-    secret.matrix = tmp;
-    return secret;
-  }
   
   public static void main(String args[]) throws IOException {
+    int partyNum = 0;
+
+    switch (args.length) {
+      case 0: partyNum = 2;                         break;
+      case 1: partyNum = Integer.parseInt(args[0]); break;
+      default: 
+        System.err.println("Usage: java SecurePrinting [partyNum] --partyNum is an optional param specifying the number of shares generated");
+        System.exit(1);
+    }
+
     Matrix secret = generateSecret();
-    Matrix alpha = Matrix.random(secret.row, secret.col);
-    Matrix beta = alpha.XOR(secret);
 
-    Matrix alphaPxlMap = generatePixelMap(alpha, 0, 2);
-    Matrix betaPxlMap = generatePixelMap(beta, 1, 2);
-    Matrix secretPxlMap = alphaPxlMap.XOR(betaPxlMap);
-    Matrix overlayedPxlMap = alphaPxlMap.OR(betaPxlMap);
+    /* Generate n-1 random shares and create last share as result of bitwise XOR*/
+    ArrayList<Matrix> shares = new ArrayList<Matrix>();
+    for (int i=0; i<partyNum-1; i++) shares.add(Matrix.random(secret.row, secret.col));
+    shares.add(Matrix.XOR(secret, shares));
 
-    Bitmap alphaBmp = new Bitmap(alphaPxlMap);
-    Bitmap betaBmp = new Bitmap(betaPxlMap);
-    Bitmap secretBmp = new Bitmap(secretPxlMap);
-    Bitmap overlayedBmp = new Bitmap(overlayedPxlMap);
+    /* Generate the pixel maps corresponding to all n shares*/
+    ArrayList<Matrix> pxlmaps = new ArrayList<Matrix>();
+    int idx = 0;
+    for (Matrix share : shares) {
+      pxlmaps.add(generatePixelMap(share, idx, partyNum));
+      idx++;
+    }
     
-    alphaBmp.write("alpha.bmp");
-    betaBmp.write("beta.bmp");
+    Matrix secretPxlMap = Matrix.XOR(pxlmaps);
+    Matrix overlayedPxlMap = Matrix.OR(pxlmaps);
+
+    //Generating bitmaps for all shares
+    idx = 0;
+    for (Matrix pxlmap : pxlmaps)  {
+      Bitmap bmp = new Bitmap(pxlmap);
+      bmp.write("share-" + idx + ".bmp");
+      idx++;
+    }
+    //Generating bitmaps for secret and overlayed pixel maps
+    Bitmap secretBmp = new Bitmap(secretPxlMap);
     secretBmp.write("secret.bmp");
+    Bitmap overlayedBmp = new Bitmap(overlayedPxlMap);
     overlayedBmp.write("overlayed.bmp");
   }
 }

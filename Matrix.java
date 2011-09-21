@@ -1,5 +1,6 @@
 /* Inspired from: http://introcs.cs.princeton.edu/java/95linear/Matrix.java.html */
 import java.util.Random;
+import java.util.ArrayList;
 
 public class Matrix {
   public final int row;
@@ -44,8 +45,28 @@ public class Matrix {
     return _op(TYPE_XOR, B);
   }
   
+  public static Matrix XOR(ArrayList<Matrix> matrices) {
+    int[] dim = {matrices.get(0).row, matrices.get(0).col};
+    Matrix result = new Matrix(dim[0], dim[1]);
+    for (Matrix mat : matrices) result = result.XOR(mat);
+    return result;
+  }
+  
+  public static Matrix XOR(Matrix A, ArrayList<Matrix> matrices) {
+    Matrix result = A;
+    for (Matrix mat : matrices) result = result.XOR(mat);
+    return result;
+  }
+  
   public Matrix OR(Matrix B) {
     return _op(TYPE_OR, B);
+  }
+
+  public static Matrix OR(ArrayList<Matrix> matrices) {
+    int[] dim = {matrices.get(0).row, matrices.get(0).col};
+    Matrix result = new Matrix(dim[0], dim[1]);
+    for (Matrix mat : matrices) result = result.OR(mat);
+    return result;
   }
 
   public void print() {
