@@ -2,6 +2,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.File;
 import javax.imageio.ImageIO;
+import java.awt.Image;
+import java.util.Arrays;
 
 public class Bitmap { 
   private final int width;
@@ -22,9 +24,29 @@ public class Bitmap {
   }
 
   public void write(String filename) throws IOException {
-    BufferedImage bf = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB); 
+    BufferedImage bf = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY); 
     bf.setRGB(0, 0, width, height, imgData, 0, width);
     ImageIO.write(bf, "bmp", new File(filename));
+    //FIXME: debugging statement
+    System.out.println(filename + " - width:" + width + ", height:" + height);
+    System.out.println(Arrays.toString(imgData));
+  }
+
+  public static Matrix read(String filename) throws IOException {
+    BufferedImage image = ImageIO.read(new File(filename));
+    int width = image.getWidth();
+    int height = image.getHeight();
+    int[] array = image.getRGB(0, 0, width, height, null, 0, width);
+    //FIXME: debugging statement 
+    System.out.println(filename);
+    System.out.println(Arrays.toString(array));
+    return null;
+  }
+
+  public void print() throws IOException {
+    BufferedImage bf = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY); 
+    bf.setRGB(0, 0, width, height, imgData, 0, width);
+    System.out.println(bf.toString());
   }
 }
 
