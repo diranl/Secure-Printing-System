@@ -1,4 +1,3 @@
-/* Inspired from: http://introcs.cs.princeton.edu/java/95linear/Matrix.java.html */
 import java.util.Random;
 import java.util.ArrayList;
 
@@ -77,6 +76,17 @@ public class Matrix {
       }
       System.out.print('\n');
     }
+  }
+
+  public int[] toRGBArray() {
+    int[] rgbArray = new int[row*col];
+    for (int i=0, idx=0; i<row; i++) {
+      for (int j=0; j<col; j++) {
+        rgbArray[idx] = (matrix[i][j] == 0) ? Bitmap.WHITE_PXL : Bitmap.BLACK_PXL;
+        idx++;
+      }
+    }
+    return rgbArray;
   }
 }
 

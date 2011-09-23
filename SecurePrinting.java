@@ -73,7 +73,9 @@ class SecurePrinting {
     //Generating bitmaps for secret and overlayed pixel maps
     Bitmap secretBmp = new Bitmap(secretPxlMap);
     secretBmp.write("secret.bmp");
+    secretPxlMap.print();
     Bitmap overlayedBmp = new Bitmap(overlayedPxlMap);
     overlayedBmp.write("overlayed.bmp");
+    overlayedPxlMap.print();
   }
 }
