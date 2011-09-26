@@ -14,8 +14,8 @@ public class Bitmap {
   public static final int BLACK_PXL = 255<<24;
   
   public Bitmap(Matrix bitMatrix) {
-    width = bitMatrix.row;
-    height = bitMatrix.col;
+    height = bitMatrix.row;
+    width = bitMatrix.col;
     rgbArray = bitMatrix.toRGBArray();
   }
 
@@ -34,10 +34,10 @@ public class Bitmap {
   }
 
   public static Matrix toMatrix(int width, int height, int[] rgbArray) {
-    Matrix imgData = new Matrix(width, height);
+    Matrix imgData = new Matrix(height, width);
     for (int idx=0, rowIdx=0, colIdx=0; idx<rgbArray.length; idx++, colIdx++) {
-       if (colIdx != 0 && colIdx % width == 0) { colIdx = 0; rowIdx++; }
-       imgData.matrix[rowIdx][colIdx] = (rgbArray[idx] == WHITE_PXL) ? 0 : 1;
+      if (colIdx != 0 && colIdx % width == 0) { colIdx = 0; rowIdx++; }
+      imgData.matrix[rowIdx][colIdx] = (rgbArray[idx] == WHITE_PXL) ? 0 : 1;
     }
     return imgData;
   }

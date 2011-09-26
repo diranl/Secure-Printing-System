@@ -1,8 +1,15 @@
 import java.util.Stack;
 
 public class BasisMatrix extends Matrix {
-  public BasisMatrix(int n) {
+  public static final String SQUARE_COMPLETION = "-squarecomplete";
+  public static final String NON_SQUARE = "-nonsquare";
+  public static final String RECTANGLE_COMPLETE = "-rectcomplete";
+
+  private String method;
+
+  public BasisMatrix(int n, String method) {
     super(n, (int)Math.pow(2, n-1));
+    this.method = method;
     permute();
   }
 
@@ -63,6 +70,7 @@ public class BasisMatrix extends Matrix {
   }
 
   /* _findSquare: returns a two-tuple (rowsize, colsize)*/
+  // TODO: squaring based on input param 
   private Matrix _square(int[] row) {
     int rowSize = 1, colSize = row.length;
     for (; rowSize*2 <= colSize/2; rowSize*=2, colSize/=2) {}

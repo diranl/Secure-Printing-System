@@ -12,7 +12,7 @@ public class Matrix {
   public Matrix(int row, int col) {
     this.row = row;
     this.col = col;
-    matrix = new int[row][col];   /*Default values: 0*/
+    matrix = new int[row][col];   /*Default entries: 0*/
   } 
 
   public static Matrix random(int row, int col) {
