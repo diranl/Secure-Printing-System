@@ -10,7 +10,7 @@ class SecurePrinting {
                    {0,1,1,1,1,0},
                    {1,1,0,0,1,1},
                    {1,1,0,0,1,1},
-                   {0,1,1,0,1,1},
+                   {0,1,1,1,1,0},
                    {0,0,1,1,0,0}};
     secret.matrix = tmp;
     return secret;
@@ -24,9 +24,10 @@ class SecurePrinting {
     for (int i=0; i<secret.row; i++) {
       for (int j=0; j<secret.col; j++) {
         Matrix pixel = basis.retrieve(partyIdx, secret.matrix[i][j]);
+
         // Merging of matrices using pixel
-        for (int pxlRow=0, pxlMapRow=i*2; pxlRow<pixel.row; pxlRow++) {
-          for (int pxlCol=0, pxlMapCol=j*2; pxlCol<pixel.col; pxlCol++) {
+        for (int pxlRow=0, pxlMapRow=i*dim[0]; pxlRow<pixel.row; pxlRow++, pxlMapRow++) {
+          for (int pxlCol=0, pxlMapCol=j*dim[1]; pxlCol<pixel.col; pxlCol++, pxlMapCol++) {
             pixelMap.matrix[pxlMapRow][pxlMapCol] = pixel.matrix[pxlRow][pxlCol];
           }
         }

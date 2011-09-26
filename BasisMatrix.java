@@ -95,7 +95,7 @@ public class BasisMatrix extends Matrix {
   }
 
   public Matrix retrieve(int rowIdx, int bit) {
-    int[] row = super.matrix[rowIdx];
+    int[] row = super.matrix[rowIdx].clone();
     if (bit == 1) { for (int i=0; i<row.length; i++) row[i] = row[i] ^ 1; }
     return _square(row);
   }
