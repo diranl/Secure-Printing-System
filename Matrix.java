@@ -26,45 +26,46 @@ public class Matrix {
     return A;
   }
   
-  private Matrix _op(int type, Matrix B) {
+  private Matrix _operation(int type, Matrix B, boolean overwrite) {
     Matrix A = this;
     if (B.row != A.row || B.col != A.col) throw new RuntimeException("Illegal matrix dimensions.");
-    Matrix C = new Matrix(this.row, this.col);
+    
+    Matrix C = (overwrite == true) ? A : new Matrix(this.row, this.col);
     for (int i=0; i<this.row; i++) {
       for (int j=0; j<this.col; j++) {
         if (type == TYPE_XOR)      C.matrix[i][j] = A.matrix[i][j] ^ B.matrix[i][j];
         else if (type == TYPE_OR)  C.matrix[i][j] = A.matrix[i][j] | B.matrix[i][j];
-        else throw new RuntimeException("Invalid type parameter for _op");
+        else throw new RuntimeException("Invalid type parameter for _operation");
       }
     }
     return C;
   }
 
-  public Matrix XOR(Matrix B) {
-    return _op(TYPE_XOR, B);
+  public Matrix XOR(Matrix B, boolean overwrite) {
+    return _operation(TYPE_XOR, B, overwrite);
   }
   
   public static Matrix XOR(ArrayList<Matrix> matrices) {
     int[] dim = {matrices.get(0).row, matrices.get(0).col};
     Matrix result = new Matrix(dim[0], dim[1]);
-    for (Matrix mat : matrices) result = result.XOR(mat);
+    for (Matrix mat : matrices) result.XOR(mat, true);
     return result;
   }
   
   public static Matrix XOR(Matrix A, ArrayList<Matrix> matrices) {
     Matrix result = A;
-    for (Matrix mat : matrices) result = result.XOR(mat);
+    for (Matrix mat : matrices) result.XOR(mat, true);
     return result;
   }
   
-  public Matrix OR(Matrix B) {
-    return _op(TYPE_OR, B);
+  public Matrix OR(Matrix B, boolean overwrite) {
+    return _operation(TYPE_OR, B, overwrite);
   }
 
   public static Matrix OR(ArrayList<Matrix> matrices) {
     int[] dim = {matrices.get(0).row, matrices.get(0).col};
     Matrix result = new Matrix(dim[0], dim[1]);
-    for (Matrix mat : matrices) result = result.OR(mat);
+    for (Matrix mat : matrices) result.OR(mat, true);
     return result;
   }
 

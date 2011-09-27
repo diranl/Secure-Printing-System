@@ -71,33 +71,29 @@ public class BasisMatrix extends Matrix {
 
   /* _findSquare: returns a two-tuple (rowsize, colsize)*/
   // TODO: squaring based on input param 
-  private Matrix _square(int[] row) {
+  private void _square(int[] row, Matrix square) {
     int rowSize = 1, colSize = row.length;
     for (; rowSize*2 <= colSize/2; rowSize*=2, colSize/=2) {}
 
-    Matrix square; 
     if (rowSize == colSize) {
       // Perfect square 
-      square = new Matrix(rowSize, colSize);
       for (int rowIdx=0, colIdx=0, idx=0; idx<row.length; colIdx++, idx++) {
         if (colIdx == colSize) { colIdx = 0; rowIdx++; }
         square.matrix[rowIdx][colIdx] = row[idx];
       }
     } else {
       // Needs squaring through doubling
-      square = new Matrix(rowSize*2, colSize);
       for (int rowIdx=0, colIdx=0, idx=0; idx<row.length*2; colIdx++, idx++) {
         if (colIdx == colSize)  { colIdx = 0; rowIdx++; }
         square.matrix[rowIdx][colIdx] = row[idx % row.length];
       }
     }
-    return square;
   }
 
-  public Matrix retrieve(int rowIdx, int bit) {
+  public void retrieve(int rowIdx, int bit, Matrix container) {
     int[] row = super.matrix[rowIdx].clone();
     if (bit == 1) { for (int i=0; i<row.length; i++) row[i] = row[i] ^ 1; }
-    return _square(row);
+    _square(row, container);
   }
 
   public int[] pxlDim() {

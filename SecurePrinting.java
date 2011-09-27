@@ -18,16 +18,17 @@ class SecurePrinting {
 
   public static Matrix generatePixelMap(Matrix secret, int partyIdx, int partyNum, String method) {
     BasisMatrix basis = new BasisMatrix(partyNum, method);
-    int[] dim = basis.pxlDim();
+    int[] pxlDim = basis.pxlDim();
+    Matrix pixel = new Matrix(pxlDim[0], pxlDim[1]);
 
-    Matrix pixelMap = new Matrix(secret.row * dim[0], secret.col * dim[1]);
+    Matrix pixelMap = new Matrix(secret.row * pxlDim[0], secret.col * pxlDim[1]);
     for (int i=0; i<secret.row; i++) {
       for (int j=0; j<secret.col; j++) {
-        Matrix pixel = basis.retrieve(partyIdx, secret.matrix[i][j]);
+        basis.retrieve(partyIdx, secret.matrix[i][j], pixel);
 
         // Merging of matrices using pixel
-        for (int pxlRow=0, pxlMapRow=i*dim[0]; pxlRow<pixel.row; pxlRow++, pxlMapRow++) {
-          for (int pxlCol=0, pxlMapCol=j*dim[1]; pxlCol<pixel.col; pxlCol++, pxlMapCol++) {
+        for (int pxlRow=0, pxlMapRow=i*pxlDim[0]; pxlRow<pixel.row; pxlRow++, pxlMapRow++) {
+          for (int pxlCol=0, pxlMapCol=j*pxlDim[1]; pxlCol<pixel.col; pxlCol++, pxlMapCol++) {
             pixelMap.matrix[pxlMapRow][pxlMapCol] = pixel.matrix[pxlRow][pxlCol];
           }
         }
@@ -68,7 +69,7 @@ class SecurePrinting {
    * method: pixel squaring method 
    */
   public static void main(String args[]) throws IOException {
-    int partyNum = 2;
+    int partyNum = 3;
     String filename = "";
     String method = BasisMatrix.RECTANGLE_COMPLETE;
 
