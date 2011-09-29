@@ -69,37 +69,63 @@ public class BasisMatrix extends Matrix {
     }
   }
 
-  /* _findSquare: returns a two-tuple (rowsize, colsize)*/
-  // TODO: squaring based on input param 
-  private void _square(int[] row, Matrix square) {
-    int rowSize = 1, colSize = row.length;
-    for (; rowSize*2 <= colSize/2; rowSize*=2, colSize/=2) {}
+  private void _rectcomplete(int[] row, Matrix container) {
+    int[] dim = pxlDim();
+    int rowSize = dim[0], colSize = dim[1];
 
     if (rowSize == colSize) {
       // Perfect square 
       for (int rowIdx=0, colIdx=0, idx=0; idx<row.length; colIdx++, idx++) {
         if (colIdx == colSize) { colIdx = 0; rowIdx++; }
-        square.matrix[rowIdx][colIdx] = row[idx];
+        container.matrix[rowIdx][colIdx] = row[idx];
       }
     } else {
       // Needs squaring through doubling
       for (int rowIdx=0, colIdx=0, idx=0; idx<row.length*2; colIdx++, idx++) {
         if (colIdx == colSize)  { colIdx = 0; rowIdx++; }
-        square.matrix[rowIdx][colIdx] = row[idx % row.length];
+        container.matrix[rowIdx][colIdx] = row[idx % row.length];
       }
+    }
+  }
+
+  private void _squarecomplete(int[] row, Matrix container) {
+    int[] dim = pxlDim();
+    int rowSize = dim[0], colSize = dim[1];
+
+    int rowIdx=0, colIdx=0;
+    /* Transcribe the array elements into matrix */
+    for (int idx=0; idx<row.length; idx++, colIdx++) {
+      if (colIdx == colSize) { colIdx = 0; rowIdx++; }
+      container.matrix[rowIdx][colIdx] = row[idx];
+    }
+    /* Insert padding if necessary */
+    for (int idx=row.length; idx<rowSize*colSize; idx++, colIdx++) {
+      if (colIdx == colSize) { colIdx = 0; rowIdx++; }
+      container.matrix[rowIdx][colIdx] = 1;
     }
   }
 
   public void retrieve(int rowIdx, int bit, Matrix container) {
     int[] row = super.matrix[rowIdx].clone();
     if (bit == 1) { for (int i=0; i<row.length; i++) row[i] = row[i] ^ 1; }
-    _square(row, container);
+
+    if (method.equals(SQUARE_COMPLETION)) {
+      _squarecomplete(row, container);
+    } else {
+      _rectcomplete(row, container);
+    }
   }
 
   public int[] pxlDim() {
     int rowSize = 1, colSize = super.col;
-    for (; rowSize*2 <= colSize/2; rowSize*=2, colSize/=2) {}
-    if (rowSize != colSize) rowSize *= 2;
+    if (this.method == RECTANGLE_COMPLETE) {
+      for (; rowSize*2 <= colSize/2; rowSize*=2, colSize/=2) {}
+      if (rowSize != colSize) rowSize *= 2;
+    } else if (this.method == SQUARE_COMPLETION) {
+      int sideLen = (int)Math.sqrt(super.col);
+      if (sideLen*sideLen < super.col) sideLen += 1;
+      rowSize = colSize = sideLen;
+    }
     int[] dim = {rowSize, colSize};
     return dim;
   }

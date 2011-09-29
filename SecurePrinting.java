@@ -50,14 +50,15 @@ class SecurePrinting {
   private static void checkFilename(String filename) {
     File file = new File(filename);
     if (!file.exists()) {
-      System.err.println("ERROR: file " + filename + "does not exist");
+      System.err.println("ERROR: file " + filename + " does not exist");
       usage();
     }
   }
 
   private static void checkMethod(String method) {
-    if (method != BasisMatrix.SQUARE_COMPLETION && method != BasisMatrix.NON_SQUARE && method != BasisMatrix.RECTANGLE_COMPLETE) {
-      System.err.println("ERROR: method " + method + "does not exist");
+    if (!method.equals(BasisMatrix.SQUARE_COMPLETION) && !method.equals(BasisMatrix.NON_SQUARE) && !method.equals(BasisMatrix.RECTANGLE_COMPLETE)) {
+      System.err.println("ERROR: method " + method + " does not exist");
+      System.err.println("Expecting: " + BasisMatrix.SQUARE_COMPLETION + ", " + BasisMatrix.NON_SQUARE + ", or " + BasisMatrix.RECTANGLE_COMPLETE);
       usage();
     }
   }
