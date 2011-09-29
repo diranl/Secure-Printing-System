@@ -70,7 +70,7 @@ class SecurePrinting {
    * method: pixel squaring method 
    */
   public static void main(String args[]) throws IOException {
-    int partyNum = 3;
+    int partyNum = 2;
     String filename = "";
     String method = BasisMatrix.RECTANGLE_COMPLETE;
 
@@ -112,7 +112,7 @@ class SecurePrinting {
       pxlmaps.add(generatePixelMap(share, idx, partyNum, method));
       idx++;
     }
-    
+
     Matrix secretPxlMap = Matrix.XOR(pxlmaps);
     Matrix overlayedPxlMap = Matrix.OR(pxlmaps);
 

@@ -70,8 +70,8 @@ public class BasisMatrix extends Matrix {
   }
 
   private void _rectcomplete(int[] row, Matrix container) {
-    int[] dim = pxlDim();
-    int rowSize = dim[0], colSize = dim[1];
+    int rowSize = 1, colSize = super.col;
+    for (; rowSize*2 <= colSize/2; rowSize*=2, colSize/=2) {}
 
     if (rowSize == colSize) {
       // Perfect square 
@@ -118,10 +118,10 @@ public class BasisMatrix extends Matrix {
 
   public int[] pxlDim() {
     int rowSize = 1, colSize = super.col;
-    if (this.method == RECTANGLE_COMPLETE) {
+    if (this.method.equals(RECTANGLE_COMPLETE)) {
       for (; rowSize*2 <= colSize/2; rowSize*=2, colSize/=2) {}
       if (rowSize != colSize) rowSize *= 2;
-    } else if (this.method == SQUARE_COMPLETION) {
+    } else if (this.method.equals(SQUARE_COMPLETION)) {
       int sideLen = (int)Math.sqrt(super.col);
       if (sideLen*sideLen < super.col) sideLen += 1;
       rowSize = colSize = sideLen;
