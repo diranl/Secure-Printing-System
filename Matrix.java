@@ -4,7 +4,7 @@ import java.util.ArrayList;
 public class Matrix {
   public final int row;
   public final int col;
-  public int[][] matrix;
+  public short[][] matrix;
 
   private final int TYPE_XOR = 0;
   private final int TYPE_OR  = 1;
@@ -12,7 +12,7 @@ public class Matrix {
   public Matrix(int row, int col) {
     this.row = row;
     this.col = col;
-    matrix = new int[row][col];   /*Default entries: 0*/
+    matrix = new short[row][col];   /*Default entries: 0*/
   } 
 
   public static Matrix random(int row, int col) {
@@ -20,7 +20,7 @@ public class Matrix {
     Matrix A = new Matrix(row, col);
     for (int i=0; i<row; i++) {
       for (int j=0; j<col; j++) {
-        A.matrix[i][j] = rand.nextInt(2);
+        A.matrix[i][j] = (short)rand.nextInt(2);
       }
     }
     return A;
@@ -53,7 +53,8 @@ public class Matrix {
   }
   
   public static Matrix XOR(Matrix A, ArrayList<Matrix> matrices) {
-    Matrix result = A;
+    Matrix result = new Matrix(A.row, A.col);
+    result.XOR(A, true);
     for (Matrix mat : matrices) result.XOR(mat, true);
     return result;
   }

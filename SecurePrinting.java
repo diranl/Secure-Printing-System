@@ -16,27 +16,47 @@ class SecurePrinting {
     return secret;
   }
 
-  public static Matrix generatePixelMap(Matrix secret, int partyIdx, int partyNum, String method) {
+  public static void generatePixelMap(Matrix secret, int partyIdx, int partyNum, String method) {
     BasisMatrix basis = new BasisMatrix(partyNum, method);
     int[] pxlDim = basis.pxlDim();
     Matrix pixel = new Matrix(pxlDim[0], pxlDim[1]);
 
-    Matrix pixelMap = new Matrix(secret.row * pxlDim[0], secret.col * pxlDim[1]);
+    // Matrix pixelMap = new Matrix(secret.row * pxlDim[0], secret.col * pxlDim[1]);
+    int width = secret.row * pxlDim[0], height = secret.col * pxlDim[1];
+    short[] rgbArray = new short[width * height];
     for (int i=0; i<secret.row; i++) {
       for (int j=0; j<secret.col; j++) {
         basis.retrieve(partyIdx, secret.matrix[i][j], pixel);
 
-        // Merging of matrices using pixel
         for (int pxlRow=0, pxlMapRow=i*pxlDim[0]; pxlRow<pixel.row; pxlRow++, pxlMapRow++) {
           for (int pxlCol=0, pxlMapCol=j*pxlDim[1]; pxlCol<pixel.col; pxlCol++, pxlMapCol++) {
-            pixelMap.matrix[pxlMapRow][pxlMapCol] = pixel.matrix[pxlRow][pxlCol];
+            rgbArray[(pxlMapRow*width) + pxlMapCol] = pixel.matrix[pxlRow][pxlCol];
           }
         }
       }
     }
-    return pixelMap;
+
+    Bitmap bmp = new Bitmap(rgbArray, width, height);
+    bmp.write("share-" + partyNum + ".bmp");
   }
   
+  public static void generateOverlay(ArrayList<Matrix> shares, int partyNum, String method) {
+    BasisMatrix basis = new BasisMatrix(partyNum, method);
+    int[] pxlDim = basis.pxlDim();
+    Matrix pixel = new Matrix(pxlDim[0], pxlDim[1]);
+
+    int[] sharesDim = {shares.get(0).row, shares.get(0).col};
+    Matrix overlayedPxlMap = new Matrix(sharesDim[0]*pxlDim[0], sharesDim[1]*pxlDim[1]);
+    for (int sharesRow=0; sharesRow<sharesDim[0]; sharesRow++) {
+      for (int sharesCol=0; sharesCol<sharesDim[1]; sharesCol++) {
+        for (int sharesIdx=0; sharesIdx
+      }
+    }
+  }
+
+  public static void generateSecret(ArrayList<Matrix> shares) {
+    
+  }
   
   private static void usage() {
     System.err.println(
@@ -106,23 +126,13 @@ class SecurePrinting {
     shares.add(Matrix.XOR(secret, shares));
 
     /* Generate the pixel maps corresponding to all n shares*/
-    ArrayList<Matrix> pxlmaps = new ArrayList<Matrix>();
-    int idx = 0;
     for (Matrix share : shares) {
-      pxlmaps.add(generatePixelMap(share, idx, partyNum, method));
-      idx++;
+      generatePixelMap(share, idx, partyNum, method);
     }
 
     Matrix secretPxlMap = Matrix.XOR(pxlmaps);
     Matrix overlayedPxlMap = Matrix.OR(pxlmaps);
 
-    //Generating bitmaps for all shares
-    idx = 0;
-    for (Matrix pxlmap : pxlmaps)  {
-      Bitmap bmp = new Bitmap(pxlmap);
-      bmp.write("share-" + idx + ".bmp");
-      idx++;
-    }
     //Generating bitmaps for secret and overlayed pixel maps
     Bitmap secretBmp = new Bitmap(secretPxlMap);
     secretBmp.write("secret.bmp");

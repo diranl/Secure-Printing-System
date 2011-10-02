@@ -19,6 +19,12 @@ public class Bitmap {
     rgbArray = bitMatrix.toRGBArray();
   }
 
+  public Bitmap(int[] rgbArray, int width, int heigth) {
+    this.width = width;
+    this.height = height;
+    this.rgbArray = rgbArray;
+  }
+
   public void write(String filename) throws IOException {
     BufferedImage bf = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY); 
     bf.setRGB(0, 0, width, height, rgbArray, 0, width);
