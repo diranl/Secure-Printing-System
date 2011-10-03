@@ -16,48 +16,50 @@ class SecurePrinting {
     return secret;
   }
 
-  public static void generatePixelMap(Matrix secret, int partyIdx, int partyNum, String method) {
+  public static void generatePixelMap(Matrix share, int partyIdx, int partyNum, String method) throws IOException {
     BasisMatrix basis = new BasisMatrix(partyNum, method);
     int[] pxlDim = basis.pxlDim();
     Matrix pixel = new Matrix(pxlDim[0], pxlDim[1]);
 
-    // Matrix pixelMap = new Matrix(secret.row * pxlDim[0], secret.col * pxlDim[1]);
-    int width = secret.row * pxlDim[0], height = secret.col * pxlDim[1];
-    short[] rgbArray = new short[width * height];
-    for (int i=0; i<secret.row; i++) {
-      for (int j=0; j<secret.col; j++) {
-        basis.retrieve(partyIdx, secret.matrix[i][j], pixel);
-
-        for (int pxlRow=0, pxlMapRow=i*pxlDim[0]; pxlRow<pixel.row; pxlRow++, pxlMapRow++) {
-          for (int pxlCol=0, pxlMapCol=j*pxlDim[1]; pxlCol<pixel.col; pxlCol++, pxlMapCol++) {
-            rgbArray[(pxlMapRow*width) + pxlMapCol] = pixel.matrix[pxlRow][pxlCol];
-          }
-        }
+    int height = share.row * pxlDim[0], width = share.col * pxlDim[1];
+    Matrix pixelMap = new Matrix(height, width);
+    for (int rowIdx=0; rowIdx<share.row; rowIdx++) {
+      for (int colIdx=0; colIdx<share.col; colIdx++) {
+        basis.retrieve(partyIdx, share.matrix[rowIdx][colIdx], pixel);
+        pixelMap.insert(rowIdx*pxlDim[0], colIdx*pxlDim[1], pixel);
       }
     }
 
-    Bitmap bmp = new Bitmap(rgbArray, width, height);
-    bmp.write("share-" + partyNum + ".bmp");
+    Bitmap bmp = new Bitmap(pixelMap.toRGBArray(), width, height);
+    bmp.write("share-" + partyIdx + ".bmp");
   }
-  
-  public static void generateOverlay(ArrayList<Matrix> shares, int partyNum, String method) {
+
+  public static void generateOutcome(ArrayList<Matrix> shares, int partyNum, String method, Matrix secret) throws IOException {
     BasisMatrix basis = new BasisMatrix(partyNum, method);
     int[] pxlDim = basis.pxlDim();
     Matrix pixel = new Matrix(pxlDim[0], pxlDim[1]);
 
-    int[] sharesDim = {shares.get(0).row, shares.get(0).col};
-    Matrix overlayedPxlMap = new Matrix(sharesDim[0]*pxlDim[0], sharesDim[1]*pxlDim[1]);
-    for (int sharesRow=0; sharesRow<sharesDim[0]; sharesRow++) {
-      for (int sharesCol=0; sharesCol<sharesDim[1]; sharesCol++) {
-        for (int sharesIdx=0; sharesIdx
+    int height = secret.row * pxlDim[0], width = secret.col * pxlDim[1];
+    Matrix secretPxlMap = new Matrix(height,width);
+    Matrix overlayedPxlMap = new Matrix(height,width);
+
+    ArrayList<Matrix> pixels = new ArrayList<Matrix>();
+    for (int rowIdx=0; rowIdx<secret.row; rowIdx++) {
+      for (int colIdx=0; colIdx<secret.col; colIdx++) {
+        pixels.clear();
+        for (int partyIdx=0; partyIdx<partyNum; partyIdx++) { pixels.add(basis.retrieve(partyIdx, shares.get(partyIdx).matrix[rowIdx][colIdx])); }
+        secretPxlMap.insert(rowIdx*pxlDim[0], colIdx*pxlDim[1], Matrix.XOR(pixels));
+        overlayedPxlMap.insert(rowIdx*pxlDim[0], colIdx*pxlDim[1], Matrix.OR(pixels));
       }
     }
-  }
 
-  public static void generateSecret(ArrayList<Matrix> shares) {
-    
-  }
-  
+    Bitmap secretBmp = new Bitmap(secretPxlMap.toRGBArray(), width, height);
+    secretBmp.write("secret.bmp");
+
+    Bitmap overlayedBmp = new Bitmap(overlayedPxlMap.toRGBArray(), width, height);
+    overlayedBmp.write("overlayed.bmp");
+  } 
+
   private static void usage() {
     System.err.println(
         "Usage: java SecurePrinting [filename [partyNum [method]]]\n"
@@ -126,17 +128,12 @@ class SecurePrinting {
     shares.add(Matrix.XOR(secret, shares));
 
     /* Generate the pixel maps corresponding to all n shares*/
+    int idx = 0;
     for (Matrix share : shares) {
       generatePixelMap(share, idx, partyNum, method);
+      idx++;
     }
 
-    Matrix secretPxlMap = Matrix.XOR(pxlmaps);
-    Matrix overlayedPxlMap = Matrix.OR(pxlmaps);
-
-    //Generating bitmaps for secret and overlayed pixel maps
-    Bitmap secretBmp = new Bitmap(secretPxlMap);
-    secretBmp.write("secret.bmp");
-    Bitmap overlayedBmp = new Bitmap(overlayedPxlMap);
-    overlayedBmp.write("overlayed.bmp");
+    generateOutcome(shares, partyNum, method, secret);
   }
 }

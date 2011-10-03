@@ -4,7 +4,7 @@ import java.util.ArrayList;
 public class Matrix {
   public final int row;
   public final int col;
-  public short[][] matrix;
+  public int[][] matrix;
 
   private final int TYPE_XOR = 0;
   private final int TYPE_OR  = 1;
@@ -12,7 +12,7 @@ public class Matrix {
   public Matrix(int row, int col) {
     this.row = row;
     this.col = col;
-    matrix = new short[row][col];   /*Default entries: 0*/
+    matrix = new int[row][col];   /*Default entries: 0*/
   } 
 
   public static Matrix random(int row, int col) {
@@ -20,7 +20,7 @@ public class Matrix {
     Matrix A = new Matrix(row, col);
     for (int i=0; i<row; i++) {
       for (int j=0; j<col; j++) {
-        A.matrix[i][j] = (short)rand.nextInt(2);
+        A.matrix[i][j] = rand.nextInt(2);
       }
     }
     return A;
@@ -89,6 +89,14 @@ public class Matrix {
       }
     }
     return rgbArray;
+  }
+
+  public void insert(int rowStart, int colStart, Matrix A) {
+    for (int rowIdx=0; rowIdx<A.row; rowIdx++) {
+      for (int colIdx=0; colIdx<A.col; colIdx++) {
+        this.matrix[rowStart+rowIdx][colStart+colIdx] = A.matrix[rowIdx][colIdx];
+      }
+    }
   }
 }
 

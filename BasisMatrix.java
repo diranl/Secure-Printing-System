@@ -116,6 +116,21 @@ public class BasisMatrix extends Matrix {
     }
   }
 
+  public Matrix retrieve(int rowIdx, int bit) {
+    int[] dim = this.pxlDim();
+    Matrix container = new Matrix(dim[0], dim[1]);
+
+    int[] row = super.matrix[rowIdx].clone();
+    if (bit == 1) { for (int i=0; i<row.length; i++) row[i] = row[i] ^ 1; }
+
+    if (method.equals(SQUARE_COMPLETION)) {
+      _squarecomplete(row, container);
+    } else {
+      _rectcomplete(row, container);
+    }
+    return container;
+  }
+
   public int[] pxlDim() {
     int rowSize = 1, colSize = super.col;
     if (this.method.equals(RECTANGLE_COMPLETE)) {

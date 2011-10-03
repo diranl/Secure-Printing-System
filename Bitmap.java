@@ -19,7 +19,7 @@ public class Bitmap {
     rgbArray = bitMatrix.toRGBArray();
   }
 
-  public Bitmap(int[] rgbArray, int width, int heigth) {
+  public Bitmap(int[] rgbArray, int width, int height) {
     this.width = width;
     this.height = height;
     this.rgbArray = rgbArray;
