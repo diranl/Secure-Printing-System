@@ -3,6 +3,8 @@ package civitas.mixnet;
 import civitas.crypto.CryptoException;
 import civitas.crypto.ElGamalCiphertext;
 import civitas.crypto.ElGamalKeyPairShare;
+import civitas.crypto.PETDecommitment;
+import civitas.crypto.PETShare;
 import civitas.crypto.concrete.CryptoFactoryC;
 import civitas.crypto.concrete.ElGamalMsgC;
 import civitas.crypto.concrete.ElGamalParametersC;
@@ -23,6 +25,8 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class TranslationTable implements Serializable {
@@ -100,6 +104,23 @@ public class TranslationTable implements Serializable {
     return msg.bigIntValue().intValue();
   }
 
+  public CipherMessage extract(ElGamalCiphertext cipher) throws CryptoException {
+    CryptoFactoryC factory = CryptoFactoryC.singleton();
+    ElGamalParametersC params = (ElGamalParametersC)share.params;
+    CipherMessage msg = null;
+    for (int idx=0; idx<size; idx++) {
+      // TODO: incorporate rigour by making each party interact and commit
+      msg = (CipherMessage)msgLst.get(idx);
+      PETShare[] petShares = new PETShare[1];
+      PETDecommitment[] petDecoms = new PETDecommitment[1];
+      petShares[0] = factory.constructPETShare(params, msg.key, cipher);
+      petDecoms[0] = petShares[0].decommitment(params);
+      ElGamalCiphertext petResult = factory.combinePETShareDecommitments(petDecoms, params);
+      if (factory.petResult(factory.elGamalDecrypt(share.privKey, petResult))) break;
+    }
+    return msg;
+  }
+  
   public void toFile(String filename) {
     try {
       FileOutputStream fos = new FileOutputStream(filename);
@@ -132,12 +153,9 @@ public class TranslationTable implements Serializable {
       msg.print();
     }
   }
-  
-  public static void main(String args[]) throws FileNotFoundException, CryptoException, NoSuchAlgorithmException, NoSuchProviderException {
-    CryptoFactoryC factory = CryptoFactoryC.singleton();
-    ElGamalParametersC params = (ElGamalParametersC)factory.generateElGamalParameters();
-    ElGamalKeyPairShare share = factory.generateKeyPairShare(params);
-    
+
+  @SuppressWarnings("Testing")
+  public static TranslationTable initTable(ElGamalKeyPairShare share) throws FileNotFoundException {
     Message a = new CipherMessage(1, Parser.parse("a.txt"), share);
     Message e = new CipherMessage(2, Parser.parse("e.txt"), share);
     Message f = new CipherMessage(3, Parser.parse("f.txt"), share);
@@ -149,22 +167,30 @@ public class TranslationTable implements Serializable {
     lst.add(f);
     lst.add(n);
     lst.add(t);
-    TranslationTable initTable = new TranslationTable(lst, share);
+    return (new TranslationTable(lst, share));
+  }
+  
+  @SuppressWarnings("Testing")
+  public static void main(String args[]) throws FileNotFoundException, CryptoException, NoSuchAlgorithmException, NoSuchProviderException {
+    CryptoFactoryC factory = CryptoFactoryC.singleton();
+    ElGamalParametersC params = (ElGamalParametersC)factory.generateElGamalParameters();
+    ElGamalKeyPairShare share = factory.generateKeyPairShare(params);
+    TranslationTable initialTbl = TranslationTable.initTable(share);
     System.out.println("Initial table:");
-    initTable.print();
+    initialTbl.print();
     System.out.println("=======================================================");
     // Perform randomization
-    FactorTable factorTable = new FactorTable(initTable);
+    FactorTable factorTable = new FactorTable(initialTbl);
     System.out.println("Factor table:");
     System.out.println("...serializing factor table");
     factorTable.toFile("factor");
     System.out.println("...reading persisted factor table");
     FactorTable factorFromFile = FactorTable.fromFile("factor");
     System.out.println("..randomizing");
-    initTable.randomize(factorFromFile);
+    initialTbl.randomize(factorFromFile);
 
     // Perform permutation
-    Permutation permutation = new Permutation(initTable.size);
+    Permutation permutation = new Permutation(initialTbl.size);
     System.out.print("Permutation: ");
     permutation.print();
     permutation.toFile("perm");
@@ -174,11 +200,11 @@ public class TranslationTable implements Serializable {
     System.out.println("...reading persisted permutation");
     System.out.print("..read: ");
     permFromFile.print();
-    initTable.permute(permFromFile);
+    initialTbl.permute(permFromFile);
     System.out.println("=======================================================");
 
     // Test serializable
-    initTable.toFile("test.txt");
+    initialTbl.toFile("test.txt");
     TranslationTable tableFromFile = fromFile("test.txt");
 
     // Test decryption

@@ -1,3 +1,5 @@
+package civitas.visual;
+
 /* NOTE: Tutorial originating from 
  * http://www.java2s.com/Tutorial/Java/0490__Security/ElGamalexamplewithrandomkeygeneration.htm
  */

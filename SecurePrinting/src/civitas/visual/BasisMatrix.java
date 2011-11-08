@@ -1,3 +1,5 @@
+package civitas.visual;
+
 import java.util.Stack;
 
 public class BasisMatrix extends Matrix {

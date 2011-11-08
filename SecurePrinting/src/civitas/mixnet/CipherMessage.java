@@ -1,14 +1,17 @@
 package civitas.mixnet;
 
+import civitas.crypto.CryptoException;
 import civitas.util.CivitasBigInteger;
 import civitas.crypto.ElGamalCiphertext;
 import civitas.crypto.ElGamalKeyPairShare;
+import civitas.crypto.ElGamalPrivateKey;
 import civitas.crypto.concrete.ElGamalMsgC;
 import civitas.crypto.concrete.CryptoFactoryC;
 import civitas.crypto.concrete.ElGamalCiphertextC;
 import civitas.crypto.concrete.ElGamalParametersC;
 import civitas.crypto.concrete.ElGamalReencryptFactorC;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 
 public class CipherMessage extends Message {
@@ -73,4 +76,27 @@ public class CipherMessage extends Message {
     System.out.println();
   }
 
+  public void decryptPrint(ElGamalPrivateKey privKey) throws CryptoException {
+    BitSet bitSet = new BitSet(length);
+    for (int idx=0; idx<length; idx++) {
+      if (cipherToBit(privKey, idx) == 1) bitSet.set(idx);
+    }
+    System.out.println("Message: " + cipherToKey(privKey));
+    for (int idx=0; idx<length; idx++) {
+      if (idx != 0 && idx % colSize == 0) System.out.println();
+      System.out.print((bitSet.get(idx) ? 1 : 0) + " ");
+    }
+    System.out.println();
+  }
+  private int cipherToBit(ElGamalPrivateKey privKey, int idx) throws CryptoException {
+    CryptoFactoryC factory = CryptoFactoryC.singleton();
+    ElGamalMsgC msg = (ElGamalMsgC)factory.elGamalDecrypt(privKey, translation.get(idx));
+    return (msg.bigIntValue().equals(CivitasBigInteger.ONE) ? 0 : 1);
+  
+  }
+  private int cipherToKey(ElGamalPrivateKey privKey) throws CryptoException {
+    CryptoFactoryC factory = CryptoFactoryC.singleton();
+    ElGamalMsgC msg = (ElGamalMsgC)factory.elGamalDecrypt(privKey, key);
+    return msg.bigIntValue().intValue();
+  }
 }
