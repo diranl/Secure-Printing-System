@@ -41,7 +41,7 @@ public class Parser {
     BitSet bitSet = new BitSet(rowSize*colSize);
     for (int idx=0, rowIdx=0; rowIdx<rowSize; rowIdx++) {
       for (int colIdx=0; colIdx<colSize; colIdx++) {
-        if (matrix.get(rowIdx).get(colIdx)) bitSet.set(rowIdx*rowSize + colIdx);
+        if (matrix.get(rowIdx).get(colIdx)) bitSet.set(rowIdx*colSize + colIdx);
       }
     }
     return bitSet;

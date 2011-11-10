@@ -28,7 +28,7 @@ public class Matrix {
   }
 
   public boolean get(int rowIdx, int colIdx) {
-    return matrix.get(rowIdx*rowSize + colIdx);
+    return matrix.get(rowIdx*colSize + colIdx);
   }
   public boolean get(int idx) {
     return matrix.get(idx);
@@ -44,7 +44,7 @@ public class Matrix {
 
   public void set(int rowIdx, int colIdx, int bit) {
     if (bit == 1) { 
-      matrix.set(rowIdx*rowSize + colIdx);
+      matrix.set(rowIdx*colSize + colIdx);
     }
   }
   public void set(int idx) {

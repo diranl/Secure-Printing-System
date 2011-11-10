@@ -112,7 +112,7 @@ public class Mixnet {
 
     // Visual Crypto
     System.out.println("\n================VISUAL CRYPTO=======================================================");
-    Printing printing = new Printing(2, cipherMsg, share.pubKey);
+    Printing printing = new Printing(3, cipherMsg, share.pubKey);
     try {
       printing.execute();
       printing.writeFinalization(share.privKey);
