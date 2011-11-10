@@ -13,8 +13,6 @@ import java.security.NoSuchProviderException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Mixnet {
   public final int serverNum; 
@@ -29,6 +27,7 @@ public class Mixnet {
     // Produces the final mixed table
     List<Server> serverLst = new ArrayList<Server>(serverNum);
     TranslationTable initialTbl = TranslationTable.initTable(share);
+    //TODO(crucial!): check that deep copies are performed rather than shallow
     Server newSvr = null;
     for (int idx=0; idx<serverNum; idx++) {
       System.out.println("Processing server: " + idx);
@@ -77,6 +76,7 @@ public class Mixnet {
     ElGamalParametersC params = (ElGamalParametersC)factory.generateElGamalParameters();
     ElGamalKeyPairShare share = factory.generateKeyPairShare(params);
 
+    System.out.println("================MIXNET=======================================================");
     Mixnet mixnet = new Mixnet(3, share);
     try {
       mixnet.execute(share);
@@ -95,15 +95,31 @@ public class Mixnet {
 
     // Pick a random position in the table as the plaintext; this position maps to a letter 
     // in the alphabet
+    System.out.println("\n================PET=======================================================");
     int selection = new Random().nextInt(5);
     ElGamalMsgC plaintxt = new ElGamalMsgC(CivitasBigInteger.valueOf(selection));
     ElGamalCiphertextC cipher = (ElGamalCiphertextC)factory.elGamalEncrypt(share.pubKey, plaintxt);
-    System.out.println("Selected message: " + selection);
+    System.out.println("Message to retrieve: " + selection);
 
     // Perform PET 
     TranslationTable mixedTbl = mixnet.mixedTable;
     CipherMessage cipherMsg = mixedTbl.extract(cipher);
+    System.out.println("Retrieved message:");
     cipherMsg.decryptPrint(share.privKey);
+
+    //TODO: check validity via Shadow Mixes
+
+    // Visual Crypto
+    System.out.println("\n================VISUAL CRYPTO=======================================================");
+    Printing printing = new Printing(2, cipherMsg, share.pubKey);
+    try {
+      printing.execute();
+      printing.writeFinalization(share.privKey);
+    } catch (NoSuchAlgorithmException ex) {
+      ex.printStackTrace();
+    } catch (NoSuchProviderException ex) {
+      ex.printStackTrace();
+    }
   }
 }
 

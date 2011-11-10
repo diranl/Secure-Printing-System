@@ -98,7 +98,7 @@ public class test {
     }
     */
     
-    /* TEST: permutation */
+    /* TEST: permutation 
     Permutation permutation = new Permutation(5);
     List<Integer> lst = Permutation.range(5);
     System.out.println("initial lst: " + lst);
@@ -106,6 +106,11 @@ public class test {
     permutation.print();
     permute(lst, permutation);
     System.out.println("permuted lst: " + lst);
+    */
+
+    /* TEST: random matrix*/
+    Matrix rand = Matrix.random(3,3);
+    rand.print();
 
   }
 }
