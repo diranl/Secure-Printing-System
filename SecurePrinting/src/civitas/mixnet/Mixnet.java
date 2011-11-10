@@ -6,6 +6,7 @@ import civitas.crypto.concrete.CryptoFactoryC;
 import civitas.crypto.concrete.ElGamalCiphertextC;
 import civitas.crypto.concrete.ElGamalMsgC;
 import civitas.crypto.concrete.ElGamalParametersC;
+import civitas.mixnet.Printing.Printer;
 import civitas.util.CivitasBigInteger;
 import java.io.FileNotFoundException;
 import java.security.NoSuchAlgorithmException;
@@ -120,6 +121,20 @@ public class Mixnet {
     } catch (NoSuchProviderException ex) {
       ex.printStackTrace();
     }
+    // printout of visual crypto
+    for (Printer printer : printing.printerLst) {
+      printer.print(share.privKey);
+    }
+    System.out.println("finalization layer:");
+    printing.finalizedMsg.decryptPrint(share.privKey);
+    // perform xor on plaintexts and compare with input msg
+    Matrix result = new Matrix(cipherMsg.rowSize, cipherMsg.colSize);
+    for (Printer printer : printing.printerLst) {
+      result.xor(printer.share, true);
+    }
+    result.xor(printing.finalizedMsg.decryptToMatrix(share.privKey), true);
+    System.out.println("\nResulting matrix:");
+    result.print();
   }
 }
 

@@ -2,6 +2,7 @@ package civitas.mixnet;
 
 //TODO: refactor out of the mixnet package
 
+import civitas.crypto.CryptoException;
 import civitas.crypto.ElGamalPrivateKey;
 import civitas.crypto.ElGamalPublicKey;
 import java.security.NoSuchAlgorithmException;
@@ -17,6 +18,8 @@ public class Printing {
   public final BasisMatrix basis;
   public CipherMessage finalizedMsg;
 
+  public List<Printer> printerLst; //FIXME: currently only useful for testing purposes
+
   public Printing(int printerNum, CipherMessage cipher, ElGamalPublicKey pubKey) {
     this.printerNum = printerNum;
     this.initialMsg = cipher;
@@ -25,7 +28,7 @@ public class Printing {
   }
   
   public void execute() throws NoSuchAlgorithmException, NoSuchProviderException {
-    List<Printer> printerLst = new ArrayList<Printer>(printerNum);
+    printerLst = new ArrayList<Printer>(printerNum);
     Printer newPrinter = null;
     for (int idx=0; idx<printerNum; idx++) {
       System.out.println("...initializing printer: " + idx);
@@ -61,6 +64,18 @@ public class Printing {
       Matrix augmented = share.augment(basis, idx);
       augmented.write("share-"+idx);
       System.out.println("..share created to: share-" + idx + ".bmp");
+    }
+
+    @SuppressWarnings("For testing purposes only")
+    protected void print(ElGamalPrivateKey privKey) {
+      try {
+        System.out.println("Random share:");
+        share.print();
+        System.out.println("Result from Homomorphic XOR:");
+        cipher.decryptPrint(privKey);
+      } catch (CryptoException ex) {
+        ex.printStackTrace();
+      }
     }
   }
 

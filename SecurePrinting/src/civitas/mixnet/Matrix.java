@@ -10,7 +10,7 @@ import java.util.Random;
 public class Matrix {
   public final int rowSize;
   public final int colSize;
-  private final BitSet matrix;
+  protected final BitSet matrix;
 
   private final int TYPE_XOR = 0;
   private final int TYPE_OR  = 1;
@@ -115,6 +115,32 @@ public class Matrix {
     return rgbArray;
   }
 
+  public Matrix xor(Matrix B, boolean overwrite) {
+    return _operation(TYPE_XOR, B, overwrite);
+  }
+
+  public Matrix or(Matrix B, boolean overwrite) {
+    return _operation(TYPE_OR, B, overwrite);
+  }
+  
+  private Matrix _operation(int type, Matrix B, boolean overwrite) {
+    Matrix A = this;
+    if (B.rowSize != A.rowSize || B.colSize != A.colSize) throw new RuntimeException("Illegal matrix dimensions.");
+
+    Matrix C = this;
+    if (overwrite) {
+      if      (type == TYPE_XOR) this.matrix.xor(B.matrix);
+      else if (type == TYPE_OR)  this.matrix.or(B.matrix);
+      else throw new RuntimeException("Illegal operation type: " + type);
+    } else {
+      BitSet bitSet = (BitSet) this.matrix.clone();
+      if      (type == TYPE_XOR) bitSet.xor(B.matrix);
+      else if (type == TYPE_OR)  bitSet.or(B.matrix);
+      else throw new RuntimeException("Illegal operation type: " + type);
+      C = new Matrix(rowSize, colSize, bitSet);
+    }
+    return C;
+  }
   /*
   private Matrix _operation(int type, Matrix B, boolean overwrite) {
     Matrix A = this;

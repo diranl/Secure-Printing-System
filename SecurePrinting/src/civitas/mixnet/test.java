@@ -108,9 +108,21 @@ public class test {
     System.out.println("permuted lst: " + lst);
     */
 
-    /* TEST: random matrix*/
+    /* TEST: random matrix
     Matrix rand = Matrix.random(3,3);
     rand.print();
+    */
+
+    /* TEST: basis matrix, matrix augmentation*/
+    Matrix rand = Matrix.random(4,4);
+    BasisMatrix basis = new BasisMatrix(4, BasisMatrix.DEFAULT);
+    Matrix augmented = rand.augment(basis, 0);
+    System.out.println("Random matrix:");
+    rand.print();
+    System.out.println("Basis matrix:");
+    basis.print();
+    System.out.println("Augmented matrix:");
+    augmented.print();
 
   }
 }
