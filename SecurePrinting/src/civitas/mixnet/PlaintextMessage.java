@@ -25,6 +25,14 @@ public class PlaintextMessage extends Message {
     return translation.get(idx);
   }
 
+  public boolean equals(Object obj) {
+    if (!(obj instanceof PlaintextMessage)) return false;
+
+    PlaintextMessage plaintxt = (PlaintextMessage)obj;
+    if (key != plaintxt.key)                return false;
+    return translation.equals(plaintxt.translation);
+  }
+
   public void print() {
     System.out.println("Key: " + key);
     for (int idx=0; idx<length; idx++) {

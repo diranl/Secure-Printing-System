@@ -11,13 +11,19 @@ import civitas.util.CivitasBigInteger;
 import java.io.FileNotFoundException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Mixnet {
   public final int serverNum; 
   public TranslationTable mixedTable;
+  public List<Server> serverLst;
+
+  public static int CHALLENGE_NUM = 3;
 
   public Mixnet(int serverNum, ElGamalKeyPairShare share) {
     this.serverNum = serverNum;
@@ -26,7 +32,7 @@ public class Mixnet {
   public void execute(ElGamalKeyPairShare share) throws FileNotFoundException, NoSuchAlgorithmException, NoSuchProviderException {
     // Performs the mixing, server by server in a serial fashion, as described by part 1. of Sub-protocol 1.1
     // Produces the final mixed table
-    List<Server> serverLst = new ArrayList<Server>(serverNum);
+    this.serverLst = new ArrayList<Server>(serverNum);
     TranslationTable initialTbl = TranslationTable.initTable(share);
     //TODO(crucial!): check that deep copies are performed rather than shallow
     Server newSvr = null;
@@ -36,35 +42,118 @@ public class Mixnet {
       else newSvr = new Server(serverLst.get(idx-1));
       serverLst.add(newSvr);
     }
-    this.mixedTable = newSvr.translation;
+    this.mixedTable = newSvr.outputTbl;
+  }
+
+  public void validate() throws NoSuchAlgorithmException, NoSuchProviderException {
+    for (Server server : serverLst) {
+      Random rand = SecureRandom.getInstance("SHA1PRNG", "SUN");
+      for (int idx=0; idx<CHALLENGE_NUM; idx++) {
+        server.challenge();
+        ChallengeProof proof = server.reveal(rand.nextInt(2)==0 ? true : false);
+        if (!verifyProof(proof)) throw new RuntimeException("did not verify");
+      }
+    }
+  }
+
+  public static boolean verifyProof(ChallengeProof proof) {
+    TranslationTable transformTbl = new TranslationTable(proof.inputTbl);
+    transformTbl.randomize(proof.factorTbl);
+    transformTbl.permute(proof.permutation);
+    return transformTbl.equals(proof.control);
   }
 
   protected class Server {
-    protected final TranslationTable translation;
+    protected final TranslationTable inputTbl;
+    protected final TranslationTable outputTbl;
     protected final FactorTable factorTable;
     protected final Permutation permutation;
+    protected Challenge challenge;
 
     // 1. Generates random factors (for ElGamal reencryption)
     // 2. Generate permutations
     // 3. Commit to random factors
     // 4. Commit to permutations
     // 5. Perform randomize() and permute() methods for TranslationTable
-    protected Server(TranslationTable inputTable) throws NoSuchAlgorithmException, NoSuchProviderException {
-      this.translation = new TranslationTable(inputTable);
-      this.factorTable = new FactorTable(translation);
-      this.permutation = new Permutation(translation.size);
+    protected Server(TranslationTable inputTbl) throws NoSuchAlgorithmException, NoSuchProviderException {
+      this.inputTbl = inputTbl;
+      this.outputTbl = new TranslationTable(inputTbl);
+      this.factorTable = new FactorTable(inputTbl);
+      this.permutation = new Permutation(inputTbl.size);
       mix();
     }
     protected Server(Server inputSvr) throws NoSuchAlgorithmException, NoSuchProviderException {
-      this(inputSvr.translation);
+      this(inputSvr.outputTbl);
     }
     private void mix() {
       System.out.println("...mixing translation table");
-      translation.randomize(factorTable);
+      outputTbl.randomize(factorTable);
       System.out.println("..randomized");
-      translation.permute(permutation);
+      outputTbl.permute(permutation);
       System.out.print("..permuted with: ");
       permutation.print();
+    }
+
+    protected void challenge() {
+      try {
+        //TODO: post commitments to random and inverting mixes
+        this.challenge = new Challenge(inputTbl, outputTbl, factorTable, permutation);
+      } catch (NoSuchAlgorithmException ex) {
+        ex.printStackTrace();
+      } catch (NoSuchProviderException ex) {
+        ex.printStackTrace();
+      }
+    }
+
+    protected ChallengeProof reveal(boolean isHead) {
+      return challenge.reveal(isHead);
+    }
+  }
+
+  private class Challenge {
+    private final FactorTable randomTbl;
+    private final FactorTable invTbl;
+    private final Permutation randomPrm;
+    private final Permutation invPrm;
+    private final TranslationTable inputTbl;
+    private final TranslationTable outputTbl;
+    private final TranslationTable midTbl;
+    protected boolean challenged;
+
+    private Challenge(TranslationTable inputTbl, TranslationTable outputTbl, FactorTable factorTbl, Permutation permutation) throws NoSuchAlgorithmException, NoSuchProviderException {
+      this.randomTbl = new FactorTable(inputTbl);
+      this.randomPrm = new Permutation(permutation.size);
+      this.invTbl = factorTbl.invert(randomTbl, (ElGamalParametersC)inputTbl.share.params);
+      this.invPrm = permutation.invert(randomPrm);
+      this.inputTbl = inputTbl;
+      this.outputTbl = outputTbl;
+
+      this.midTbl = new TranslationTable(inputTbl);
+      midTbl.randomize(randomTbl);
+      midTbl.permute(randomPrm);
+      this.challenged = false;
+    }
+
+    private ChallengeProof reveal(boolean isHead) {
+      if (challenged) { throw new RuntimeException("ABORT: attempting to reveal the same challenge more than once"); }
+      this.challenged = true;
+      
+      if (isHead) return new ChallengeProof(randomTbl, randomPrm, inputTbl, midTbl);
+      else        return new ChallengeProof(invTbl, invPrm, midTbl, outputTbl);
+    }
+  }
+
+  protected class ChallengeProof {
+    public final FactorTable factorTbl;
+    public final Permutation permutation;
+    public final TranslationTable inputTbl;
+    public final TranslationTable control;
+
+    protected ChallengeProof(FactorTable factorTbl, Permutation permutation, TranslationTable inputTbl, TranslationTable control) {
+      this.factorTbl = factorTbl;
+      this.permutation = permutation;
+      this.inputTbl = inputTbl;
+      this.control = control;
     }
   }
 
@@ -102,17 +191,27 @@ public class Mixnet {
     ElGamalCiphertextC cipher = (ElGamalCiphertextC)factory.elGamalEncrypt(share.pubKey, plaintxt);
     System.out.println("Message to retrieve: " + selection);
 
+    /*check validity via Shadow Mixes
+    System.out.println("Shadow mix validation:");
+    try {
+      mixnet.validate();
+    } catch (NoSuchAlgorithmException ex) {
+      ex.printStackTrace();
+    } catch (NoSuchProviderException ex) {
+      ex.printStackTrace();
+    }
+    */
+
     // Perform PET 
     TranslationTable mixedTbl = mixnet.mixedTable;
     CipherMessage cipherMsg = mixedTbl.extract(cipher);
     System.out.println("Retrieved message:");
     cipherMsg.decryptPrint(share.privKey);
 
-    //TODO: check validity via Shadow Mixes
 
     // Visual Crypto
     System.out.println("\n================VISUAL CRYPTO=======================================================");
-    Printing printing = new Printing(3, cipherMsg, share.pubKey);
+    Printing printing = new Printing(2, cipherMsg, share.pubKey);
     try {
       printing.execute();
       printing.writeFinalization(share.privKey);

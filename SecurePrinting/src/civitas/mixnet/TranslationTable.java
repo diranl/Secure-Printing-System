@@ -34,10 +34,11 @@ public class TranslationTable implements Serializable {
   protected List<Message> msgLst; // list of Message objects. NB: lists are unsynchronized, used vector if synchronization needed
   protected final int size;
 
-  public TranslationTable(TranslationTable translation) {
-    this.msgLst = translation.msgLst;
-    this.size = translation.size;
-    this.share = translation.share;
+  public TranslationTable(TranslationTable copy) {
+    this.size = copy.size;
+    this.share = copy.share;
+    this.msgLst = new ArrayList<Message>(copy.msgLst);
+    Collections.copy(this.msgLst, copy.msgLst);
   }
   /*@PARAMS:
    * Input: list of Message objects
@@ -54,17 +55,10 @@ public class TranslationTable implements Serializable {
     List<Integer> initial = Permutation.range(permutation.size);
 
     for (int currPos=0, newPos; currPos<size; currPos++) {
-      newPos = findPositionOf(swapped.get(currPos), initial);
+      newPos = Permutation.findPositionOf(swapped.get(currPos), initial);
       Collections.swap(msgLst, currPos, newPos);
       Collections.swap(initial, currPos, newPos);
     }
-  }
-  private static int findPositionOf(int elem, List<Integer> lst) {
-    int pos=0;
-    for (; pos<lst.size(); pos++) {
-      if (lst.get(pos) == elem) break;
-    }
-    return pos;
   }
 
   public void randomize(FactorTable factorTable) {
@@ -121,6 +115,12 @@ public class TranslationTable implements Serializable {
     return msg;
   }
   
+  public boolean equals(TranslationTable input) {
+    if (this.size != input.size)           return false;
+    if (!this.msgLst.equals(input.msgLst)) return false;
+    return true;
+  }
+
   public void toFile(String filename) {
     try {
       FileOutputStream fos = new FileOutputStream(filename);

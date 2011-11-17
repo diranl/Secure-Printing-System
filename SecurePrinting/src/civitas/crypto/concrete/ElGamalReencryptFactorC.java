@@ -21,6 +21,19 @@ public class ElGamalReencryptFactorC implements ElGamalReencryptFactor, Serializ
     public ElGamalReencryptFactorC(CivitasBigInteger r) {
         this.r = r;
     }
+
+    public ElGamalReencryptFactorC subtract(ElGamalReencryptFactorC factor, CivitasBigInteger p) {
+      return (new ElGamalReencryptFactorC(this.r.modSubtract(factor.r, p.subtract(CivitasBigInteger.ONE))));
+    }
+
+    public ElGamalReencryptFactorC add(ElGamalReencryptFactorC factor, CivitasBigInteger p) {
+      return (new ElGamalReencryptFactorC(this.r.modAdd(factor.r, p.subtract(CivitasBigInteger.ONE))));
+    }
+
+    public void print() {
+      System.out.println(r);
+    }
+
     /*
     public String toXML() {
         StringWriter sb = new StringWriter();

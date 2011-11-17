@@ -32,21 +32,6 @@ public class CipherMessage extends Message {
     this.key = key;
     this.translation = translation;
   }
-  /*
-  public CipherMessage(int key, String imgfile, ElGamalKeyPairShare share) throws IOException {
-    
-    CryptoFactoryC factory = CryptoFactoryC.singleton();
-    this.key = factory.elGamalEncrypt(share.pubKey, 
-        new ElGamalMsgC(CivitasBigInteger.valueOf(key)), new ElGamalReencryptFactorC(DEFAULT_FACTOR));
-    BufferedImage image = ImageIO.read(new File(imgfile));
-    int width = image.getWidth();
-    int height = image.getHeight();
-    super(height, width, width*height);
-    int[] rgbArray = image.getRGB(0, 0, width, height, null, 0, width);
-    this.translation = fromMatrix(toMatrix(width, height, rgbArray), length, share);
-  }
-   * 
-   */
 
   public void set(int idx, ElGamalCiphertext cipher) {
     translation.set(idx, cipher);
@@ -54,6 +39,14 @@ public class CipherMessage extends Message {
   
   public ElGamalCiphertext get(int idx) {
     return translation.get(idx);
+  }
+
+  public boolean equals(Object obj) {
+    if (!(obj instanceof CipherMessage)) return false;
+
+    CipherMessage cipher = (CipherMessage)obj;
+    if (!key.equals(cipher.key))         return false;
+    return translation.equals(cipher.translation);
   }
 
   public CipherMessage xor(Matrix input, ElGamalPublicKey pubKey) {

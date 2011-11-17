@@ -13,13 +13,14 @@ public abstract class Message implements Serializable {
   protected static final int WHITE_PXL = (255<<24)|(255<<16)|(255<<8)|255;
   protected static final int BLACK_PXL = 255<<24;
 
+  public abstract void print();
+  public abstract boolean equals(Object obj);
+
   public Message(int rowSize, int colSize, int length) {
     this.rowSize = rowSize;
     this.colSize = colSize;
     this.length = length;
   }
-
-  public abstract void print();
 
   public static Matrix toMatrix(int width, int height, int[] rgbArray) {
     Matrix matrix = new Matrix(height, width);

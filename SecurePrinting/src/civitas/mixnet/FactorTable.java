@@ -3,6 +3,7 @@ package civitas.mixnet;
 import civitas.crypto.ElGamalReencryptFactor;
 import civitas.crypto.concrete.CryptoFactoryC;
 import civitas.crypto.concrete.ElGamalParametersC;
+import civitas.crypto.concrete.ElGamalReencryptFactorC;
 
 import java.io.FileNotFoundException;
 import java.io.ObjectInputStream;
@@ -20,10 +21,10 @@ public class FactorTable implements Serializable {
   protected final int size;
 
   public FactorTable(TranslationTable table) {
-    CryptoFactoryC factory = CryptoFactoryC.singleton();
-    ElGamalParametersC params = (ElGamalParametersC)table.share.params;
     this.factorTable = new ArrayList< List<ElGamalReencryptFactor> >(table.size);
     this.size = table.size;
+    CryptoFactoryC factory = CryptoFactoryC.singleton();
+    ElGamalParametersC params = (ElGamalParametersC)table.share.params;
 
     List factors;
     Message msg;
@@ -36,9 +37,35 @@ public class FactorTable implements Serializable {
       factorTable.add(factors);
     }
   }
+  public FactorTable(List< List<ElGamalReencryptFactor> > factorTable, int size) {
+    this.factorTable = factorTable;
+    this.size = size;
+  }
 
-  protected ElGamalReencryptFactor get(int row, int col) {
-    return factorTable.get(row).get(col);
+  protected ElGamalReencryptFactor get(int rowIdx, int colIdx) {
+    return factorTable.get(rowIdx).get(colIdx);
+  }
+  protected List<ElGamalReencryptFactor> extractRow(int rowIdx) {
+    return factorTable.get(rowIdx);
+  }
+  protected void set(int rowIdx, int colIdx, ElGamalReencryptFactor factor) {
+    factorTable.get(rowIdx).set(colIdx, factor);
+  }
+
+  protected FactorTable invert(FactorTable shadowTbl, ElGamalParametersC params) {
+    // For each original factors r_o and shadow factors r_s
+    // compute r_o - r_s (mod p-1), where p-1 is the order of <g>
+    List< List<ElGamalReencryptFactor> > _factorTable = new ArrayList< List<ElGamalReencryptFactor> >(size);
+    for (int rowIdx=0, colSize=this.extractRow(rowIdx).size(); rowIdx<size; rowIdx++) {
+      colSize=this.extractRow(rowIdx).size();
+      List<ElGamalReencryptFactor> _row = new ArrayList<ElGamalReencryptFactor>(colSize);
+      for (int colIdx=0; colIdx<colSize; colIdx++) {
+        ElGamalReencryptFactor inverse = ((ElGamalReencryptFactorC)this.get(rowIdx, colIdx)).subtract((ElGamalReencryptFactorC)shadowTbl.get(rowIdx, colIdx), params.p);
+        _row.add(inverse);
+      }
+      _factorTable.add(_row);
+    }
+    return (new FactorTable(_factorTable, size));
   }
 
   public void toFile(String filename) {

@@ -17,4 +17,5 @@ public interface ElGamalCiphertext {
      * 
      */
     public int hashCode();
+    public boolean equals(ElGamalCiphertext c);
 }

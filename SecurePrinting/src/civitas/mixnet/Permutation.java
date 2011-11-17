@@ -13,6 +13,8 @@ import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,6 +37,48 @@ public class Permutation implements Serializable {
     this.srnd = srnd;
     this.size = size;
     Collections.shuffle(swapped, srnd);
+  }
+  public Permutation(List<Integer> permutation, int size) {
+    this.swapped = permutation;
+    this.size = size;
+    this.srnd = null;
+  }
+
+  // Generate a map f: {0,1,...} -> {...}
+  // which dictates the mapping of elements of an ordered list based on the given permutation
+  // For e.g.: permutation={3,2,1,4,0}
+  // f({0,1,2,3,4}) = {4,2,1,0,3}, that is, 0->4, 1->2, 2->1, 3->0, 4->3
+  public static List<Integer> toMap(List<Integer> swapped) {
+    List<Integer> map = new ArrayList<Integer>(swapped.size());
+    for (int idx=0; idx<swapped.size(); idx++) map.add(findPositionOf(idx, swapped));
+    return map;
+  }
+
+  protected static int findPositionOf(int elem, List<Integer> lst) {
+    int pos=0;
+    for (; pos<lst.size(); pos++) {
+      if (lst.get(pos) == elem) break;
+    }
+    return pos;
+  }
+  
+  protected Permutation invert(Permutation shadowPrm) {
+    //TODO: sanity check for size equality
+    //For an original permutation prm_o and shadow permutation prm_s
+    // find prm_inv s.t. prm_inv(prm_s(lst)) = prm_o(lst)
+    int[] inversePrm = new int[size];
+    for (int startPos=0, midPos, endPos; startPos<size; startPos++) {
+      midPos = findPositionOf(startPos, shadowPrm.swapped);
+      endPos = findPositionOf(startPos, this.swapped);
+      inversePrm[midPos] = endPos;
+    }
+    List<Integer> _swapped = new ArrayList<Integer>(size);
+    for (int idx=0; idx<size; idx++) _swapped.add(inversePrm[idx]);
+    return (new Permutation(toMap(_swapped), size));
+  }
+
+  public int get(int idx) {
+    return swapped.get(idx);
   }
 
   public List<Integer> getList() {

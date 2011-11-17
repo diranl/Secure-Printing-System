@@ -74,7 +74,7 @@ public class BasisMatrix extends Matrix {
     }
   }
 
-  private Matrix _rectcomplete(BitSet row) {
+  private Matrix rectcomplete(BitSet row) {
     int _rowSize = 1, _colSize = super.colSize;
     for (; _rowSize*2 <= _colSize/2; _rowSize*=2, _colSize/=2) {}
     Matrix matrix = new Matrix(_rowSize, _colSize);
@@ -95,7 +95,7 @@ public class BasisMatrix extends Matrix {
     return matrix;
   }
 
-  private Matrix _squarecomplete(BitSet row) {
+  private Matrix squarecomplete(BitSet row) {
     int[] dim = pxlDim();
     int _rowSize = dim[0], _colSize = dim[1];
     Matrix matrix = new Matrix(_rowSize, _colSize);
@@ -119,10 +119,10 @@ public class BasisMatrix extends Matrix {
     if (bit == 1) row.flip(0, row.size());
 
     if (method.equals(SQUARE_COMPLETION)) {
-      return _squarecomplete(row);
+      return squarecomplete(row);
     } else {
       // DEFAULT SETTING
-      return _rectcomplete(row);
+      return rectcomplete(row);
     }
   }
 
