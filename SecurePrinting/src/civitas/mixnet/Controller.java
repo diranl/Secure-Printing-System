@@ -59,7 +59,7 @@ public class Controller {
     // Visual Crypto
     System.out.println("\n================VISUAL CRYPTO=======================================================");
     Printing printing = new Printing(3, cipherMsg, share.pubKey);
-    printing.execute();
+    printing.execute(share.privKey);
     printing.writeFinalization(share.privKey);
   }
 }

@@ -5,11 +5,14 @@ package civitas.visual;
 import civitas.crypto.CryptoException;
 import civitas.crypto.ElGamalPrivateKey;
 import civitas.crypto.ElGamalPublicKey;
+import civitas.crypto.concrete.ElGamalPrivateKeyC;
 import civitas.mixnet.CipherMessage;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class Printing {
   public final int printerNum;
@@ -27,7 +30,7 @@ public final class Printing {
     this.basis = new BasisMatrix(printerNum+1/*Extra party for finalization*/, BasisMatrix.DEFAULT);
   }
   
-  public void execute() throws NoSuchAlgorithmException, NoSuchProviderException {
+  public void execute(ElGamalPrivateKey privKey /*FIXME: privKey is used for debugging only*/) throws NoSuchAlgorithmException, NoSuchProviderException {
     printerLst = new ArrayList<Printer>(printerNum);
     Printer newPrinter = null;
     for (int idx=0; idx<printerNum; idx++) {
@@ -39,18 +42,27 @@ public final class Printing {
     }
     this.finalizedMsg = newPrinter.cipher;
 
-    // Debugging print out
+    //FIXME: Debugging print statements
+    int rowSize = 0, colSize = 0;
     for (Printer printer : this.printerLst) {
-      printer.print(share.privKey);
+      printer.print(privKey);
+      if (rowSize == 0 || colSize == 0) {
+        rowSize = printer.share.rowSize;
+        colSize = printer.share.colSize;
+      }
     }
     System.out.println("finalization layer:");
-    this.finalizedMsg.decryptPrint(share.privKey);
+    try {
+      this.finalizedMsg.decryptPrint(privKey);
+    } catch (CryptoException ex) {
+      ex.printStackTrace();
+    }
     // perform xor on plaintexts and compare with input msg
-    Matrix result = new Matrix(cipherMsg.rowSize, cipherMsg.colSize);
+    Matrix result = new Matrix(rowSize, colSize);
     for (Printer printer : this.printerLst) {
       result.xor(printer.share, true);
     }
-    result.xor(this.finalizedMsg.decryptToMatrix(share.privKey), true);
+    result.xor(this.finalizedMsg.decryptToMatrix(privKey), true);
     System.out.println("\nResulting matrix:");
     result.print();
   }
