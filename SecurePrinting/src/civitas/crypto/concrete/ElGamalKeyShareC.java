@@ -13,7 +13,6 @@ import jif.lang.Label;
 import jif.lang.LabelUtil;
  *
  */
-import civitas.common.Util;
 import civitas.crypto.ElGamalAbstractKeyShare;
 
 

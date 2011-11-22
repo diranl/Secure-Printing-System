@@ -607,6 +607,19 @@ return cs;
   }
 
   /**
+   * Computes hash of byte array and convert into Base64
+   */
+  public String hash(byte[] b) {
+    MessageDigest md = messageDigest();
+    md.update(b);
+    return bytesToBase64(md.digest());
+  }
+
+  public String hash(String s) {
+    return hash(s.getBytes());
+  }
+
+  /**
    * Compute a hash over a list of CivitasBigIntegers.
    */
   byte[] hash(List<CivitasBigInteger> l) {

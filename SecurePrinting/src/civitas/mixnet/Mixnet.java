@@ -118,7 +118,7 @@ public class Mixnet {
     private final TranslationTable inputTbl;
     private final TranslationTable outputTbl;
     private final TranslationTable midTbl;
-    protected boolean challenged;
+    protected transient boolean challenged;
 
     private Challenge(TranslationTable inputTbl, TranslationTable outputTbl, FactorTable factorTbl, Permutation permutation) throws NoSuchAlgorithmException, NoSuchProviderException {
       this.randomTbl = new FactorTable(inputTbl);
@@ -128,10 +128,30 @@ public class Mixnet {
       this.inputTbl = inputTbl;
       this.outputTbl = outputTbl;
 
+      //TODO: commitments
+
       this.midTbl = new TranslationTable(inputTbl);
       midTbl.randomize(randomTbl);
       midTbl.permute(randomPrm);
       this.challenged = false;
+    }
+
+    /**
+     * Commits to a FactorTable and a Permutation
+     * <p>NOTE: the commitment convention used is hash(permutation||random factors)</p>
+     * @param type either RANDOM or INVERSION 
+     * @return hash of commited values
+     */
+    private String commit(int type) {
+      String factor, prm; 
+      if (type == RANDOM) {
+        factor = randomTbl.toString();
+        prm = randomPrm.toString();
+      } else {
+        factor = invTbl.toString();
+        prm = invPrm.toString();
+      }
+      return factory.hash(factor + prm);
     }
 
     private ChallengeProof reveal(boolean isHead) {
@@ -191,7 +211,6 @@ public class Mixnet {
     ElGamalCiphertextC cipher = (ElGamalCiphertextC)factory.elGamalEncrypt(share.pubKey, plaintxt);
     System.out.println("Message to retrieve: " + selection);
 
-    /*check validity via Shadow Mixes
     System.out.println("Shadow mix validation:");
     try {
       mixnet.validate();
@@ -200,7 +219,6 @@ public class Mixnet {
     } catch (NoSuchProviderException ex) {
       ex.printStackTrace();
     }
-    */
 
     // Perform PET 
     TranslationTable mixedTbl = mixnet.mixedTable;
@@ -211,7 +229,7 @@ public class Mixnet {
 
     // Visual Crypto
     System.out.println("\n================VISUAL CRYPTO=======================================================");
-    Printing printing = new Printing(2, cipherMsg, share.pubKey);
+    Printing printing = new Printing(3, cipherMsg, share.pubKey);
     try {
       printing.execute();
       printing.writeFinalization(share.privKey);

@@ -9,6 +9,8 @@ import civitas.crypto.concrete.CryptoFactoryC;
 import civitas.crypto.concrete.ElGamalMsgC;
 import civitas.crypto.concrete.ElGamalParametersC;
 import civitas.util.CivitasBigInteger;
+import com.google.gson.Gson;
+import java.io.ByteArrayOutputStream;
 
 import java.io.FileNotFoundException;
 import java.io.ObjectInputStream;
@@ -29,8 +31,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
+/**
+ * TranslationTable stores the set of Messages used for mixing and printing. 
+ *
+ * The following is an example to initialize a TranslationTable from the test sources
+ *   CryptoFactoryC factory = CryptoFactoryC.singleton();
+ *   ElGamalParametersC params = (ElGamalParametersC)factory.generateElGamalParameters();
+ *   ElGamalKeyPairShare share = factory.generateKeyPairShare(params);
+ *   TranslationTable initialTbl = TranslationTable.initTable(share);
+ * 
+ * @author Diran Li
+ */
 public class TranslationTable implements Serializable {
-  protected final ElGamalKeyPairShare share;
+  protected transient final ElGamalKeyPairShare share;
   protected List<Message> msgLst; // list of Message objects. NB: lists are unsynchronized, used vector if synchronization needed
   protected final int size;
 
@@ -40,8 +53,10 @@ public class TranslationTable implements Serializable {
     this.msgLst = new ArrayList<Message>(copy.msgLst);
     Collections.copy(this.msgLst, copy.msgLst);
   }
-  /*@PARAMS:
-   * Input: list of Message objects
+
+  /**
+   * @param msgLst
+   * @param share
    */
   public TranslationTable(List<Message> msgLst, ElGamalKeyPairShare share) {
     this.msgLst = msgLst;
@@ -110,6 +125,7 @@ public class TranslationTable implements Serializable {
       petShares[0] = factory.constructPETShare(params, msg.key, cipher);
       petDecoms[0] = petShares[0].decommitment(params);
       ElGamalCiphertext petResult = factory.combinePETShareDecommitments(petDecoms, params);
+      // TODO: perform distributed decryption 
       if (factory.petResult(factory.elGamalDecrypt(share.privKey, petResult))) break;
     }
     return msg;
@@ -121,17 +137,54 @@ public class TranslationTable implements Serializable {
     return true;
   }
 
+  public byte[] toByteArray() throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    ObjectOutputStream out = new ObjectOutputStream(baos);
+    out.writeObject(this);
+    out.close();
+    return baos.toByteArray();
+  }
+
+  /**
+   * Serializes the object into a JSON equivalence using the GSON project by Google
+   */
+  public String toString() {
+    Gson gson = new Gson();
+    return gson.toJson(this);
+  }
+
+  /**
+   * Deserializes from a file into a TranslationTable object using GSON by Google
+   *
+   * FIXME: due to abstract class definitions like Message, ElGamalParameters 
+   * (as opposed to CipherMessage and ElGamalParametersC)
+   * the GSON deserialization will fail 
+   * Solution: either use implementations as opposed to interfaces 
+   * or give tags to GSON
+   */
+  public static TranslationTable fromString(String json) {
+    Gson gson = new Gson();
+    return gson.fromJson(json, TranslationTable.class);
+  }
+  
+  /**
+   * Serializes the object into a file using Java Serializable
+   */
   public void toFile(String filename) {
     try {
       FileOutputStream fos = new FileOutputStream(filename);
       ObjectOutputStream out = new ObjectOutputStream(fos);
       out.writeObject(this);
       out.close();
+      fos.close();
     } catch(IOException ex) {
       ex.printStackTrace();
     }
   }
 
+  /**
+   * Deserializes from a file to an object using Java Serializable
+   */
   public static TranslationTable fromFile(String filename) {
     TranslationTable table = null;
     try {

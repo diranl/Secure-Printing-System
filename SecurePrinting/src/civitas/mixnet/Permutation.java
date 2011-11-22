@@ -106,6 +106,14 @@ public class Permutation implements Serializable {
     System.out.println();
   }
 
+  /**
+   * Serializes the object into a JSON equivalence using the GSON project by Google
+   */
+  public String toString() {
+    Gson gson = new Gson();
+    return gson.toJson(this);
+  }
+
   public void toFile(String filename) {
     try {
       FileOutputStream fos = new FileOutputStream(filename);

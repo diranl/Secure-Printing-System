@@ -4,6 +4,7 @@ import civitas.crypto.ElGamalReencryptFactor;
 import civitas.crypto.concrete.CryptoFactoryC;
 import civitas.crypto.concrete.ElGamalParametersC;
 import civitas.crypto.concrete.ElGamalReencryptFactorC;
+import java.io.ByteArrayOutputStream;
 
 import java.io.FileNotFoundException;
 import java.io.ObjectInputStream;
@@ -66,6 +67,22 @@ public class FactorTable implements Serializable {
       _factorTable.add(_row);
     }
     return (new FactorTable(_factorTable, size));
+  }
+
+  public byte[] toByteArray() throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    ObjectOutputStream out = new ObjectOutputStream(baos);
+    out.writeObject(this);
+    out.close();
+    return baos.toByteArray();
+  }
+
+  /**
+   * Serializes the object into a JSON equivalence using the GSON project by Google
+   */
+  public String toString() {
+    Gson gson = new Gson();
+    return gson.toJson(this);
   }
 
   public void toFile(String filename) {
