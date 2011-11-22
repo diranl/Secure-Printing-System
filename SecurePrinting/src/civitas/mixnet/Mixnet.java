@@ -47,6 +47,7 @@ public class Mixnet {
 
   public void validate() throws NoSuchAlgorithmException, NoSuchProviderException {
     for (Server server : serverLst) {
+      System.out.println(".server:");
       Random rand = SecureRandom.getInstance("SHA1PRNG", "SUN");
       for (int idx=0; idx<CHALLENGE_NUM; idx++) {
         server.challenge();
@@ -57,124 +58,11 @@ public class Mixnet {
   }
 
   public static boolean verifyProof(ChallengeProof proof) {
+    System.out.println("...verifying proof");
     TranslationTable transformTbl = new TranslationTable(proof.inputTbl);
     transformTbl.randomize(proof.factorTbl);
     transformTbl.permute(proof.permutation);
     return transformTbl.equals(proof.control);
-  }
-
-  protected class Server {
-    protected final TranslationTable inputTbl;
-    protected final TranslationTable outputTbl;
-    protected final FactorTable factorTable;
-    protected final Permutation permutation;
-    protected Challenge challenge;
-
-    // 1. Generates random factors (for ElGamal reencryption)
-    // 2. Generate permutations
-    // 3. Commit to random factors
-    // 4. Commit to permutations
-    // 5. Perform randomize() and permute() methods for TranslationTable
-    protected Server(TranslationTable inputTbl) throws NoSuchAlgorithmException, NoSuchProviderException {
-      this.inputTbl = inputTbl;
-      this.outputTbl = new TranslationTable(inputTbl);
-      this.factorTable = new FactorTable(inputTbl);
-      this.permutation = new Permutation(inputTbl.size);
-      mix();
-    }
-    protected Server(Server inputSvr) throws NoSuchAlgorithmException, NoSuchProviderException {
-      this(inputSvr.outputTbl);
-    }
-    private void mix() {
-      System.out.println("...mixing translation table");
-      outputTbl.randomize(factorTable);
-      System.out.println("..randomized");
-      outputTbl.permute(permutation);
-      System.out.print("..permuted with: ");
-      permutation.print();
-    }
-
-    protected void challenge() {
-      try {
-        //TODO: post commitments to random and inverting mixes
-        this.challenge = new Challenge(inputTbl, outputTbl, factorTable, permutation);
-      } catch (NoSuchAlgorithmException ex) {
-        ex.printStackTrace();
-      } catch (NoSuchProviderException ex) {
-        ex.printStackTrace();
-      }
-    }
-
-    protected ChallengeProof reveal(boolean isHead) {
-      return challenge.reveal(isHead);
-    }
-  }
-
-  private class Challenge {
-    private final FactorTable randomTbl;
-    private final FactorTable invTbl;
-    private final Permutation randomPrm;
-    private final Permutation invPrm;
-    private final TranslationTable inputTbl;
-    private final TranslationTable outputTbl;
-    private final TranslationTable midTbl;
-    protected transient boolean challenged;
-
-    private Challenge(TranslationTable inputTbl, TranslationTable outputTbl, FactorTable factorTbl, Permutation permutation) throws NoSuchAlgorithmException, NoSuchProviderException {
-      this.randomTbl = new FactorTable(inputTbl);
-      this.randomPrm = new Permutation(permutation.size);
-      this.invTbl = factorTbl.invert(randomTbl, (ElGamalParametersC)inputTbl.share.params);
-      this.invPrm = permutation.invert(randomPrm);
-      this.inputTbl = inputTbl;
-      this.outputTbl = outputTbl;
-
-      //TODO: commitments
-
-      this.midTbl = new TranslationTable(inputTbl);
-      midTbl.randomize(randomTbl);
-      midTbl.permute(randomPrm);
-      this.challenged = false;
-    }
-
-    /**
-     * Commits to a FactorTable and a Permutation
-     * <p>NOTE: the commitment convention used is hash(permutation||random factors)</p>
-     * @param type either RANDOM or INVERSION 
-     * @return hash of commited values
-     */
-    private String commit(int type) {
-      String factor, prm; 
-      if (type == RANDOM) {
-        factor = randomTbl.toString();
-        prm = randomPrm.toString();
-      } else {
-        factor = invTbl.toString();
-        prm = invPrm.toString();
-      }
-      return factory.hash(factor + prm);
-    }
-
-    private ChallengeProof reveal(boolean isHead) {
-      if (challenged) { throw new RuntimeException("ABORT: attempting to reveal the same challenge more than once"); }
-      this.challenged = true;
-      
-      if (isHead) return new ChallengeProof(randomTbl, randomPrm, inputTbl, midTbl);
-      else        return new ChallengeProof(invTbl, invPrm, midTbl, outputTbl);
-    }
-  }
-
-  protected class ChallengeProof {
-    public final FactorTable factorTbl;
-    public final Permutation permutation;
-    public final TranslationTable inputTbl;
-    public final TranslationTable control;
-
-    protected ChallengeProof(FactorTable factorTbl, Permutation permutation, TranslationTable inputTbl, TranslationTable control) {
-      this.factorTbl = factorTbl;
-      this.permutation = permutation;
-      this.inputTbl = inputTbl;
-      this.control = control;
-    }
   }
 
   public static void main(String args[]) throws CryptoException {
@@ -211,6 +99,7 @@ public class Mixnet {
     ElGamalCiphertextC cipher = (ElGamalCiphertextC)factory.elGamalEncrypt(share.pubKey, plaintxt);
     System.out.println("Message to retrieve: " + selection);
 
+    // Shadow Mix
     System.out.println("Shadow mix validation:");
     try {
       mixnet.validate();

@@ -1,5 +1,6 @@
 package civitas.mixnet;
 
+import com.google.gson.Gson;
 import java.io.FileNotFoundException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;

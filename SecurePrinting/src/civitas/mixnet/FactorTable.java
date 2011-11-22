@@ -4,6 +4,7 @@ import civitas.crypto.ElGamalReencryptFactor;
 import civitas.crypto.concrete.CryptoFactoryC;
 import civitas.crypto.concrete.ElGamalParametersC;
 import civitas.crypto.concrete.ElGamalReencryptFactorC;
+import com.google.gson.Gson;
 import java.io.ByteArrayOutputStream;
 
 import java.io.FileNotFoundException;
