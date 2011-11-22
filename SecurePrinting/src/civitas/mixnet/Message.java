@@ -1,12 +1,13 @@
 package civitas.mixnet;
 
+import civitas.visual.Matrix;
 import java.io.Serializable;
 import java.util.BitSet;
 
 public abstract class Message implements Serializable {
-  protected final int rowSize;
-  protected final int colSize;
-  protected final int length;
+  public final int rowSize;
+  public final int colSize;
+  public final int length;
   
   protected static final int BYTE_TO_BIT = 8; 
   protected static final int INT_TO_BIT = 32;

@@ -1,5 +1,6 @@
 package civitas.mixnet;
 
+import civitas.visual.Matrix;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.BitSet;

@@ -7,7 +7,8 @@ import javax.imageio.ImageIO;
 import java.awt.Image;
 import java.util.Arrays;
 
-public class Bitmap { 
+//TODO: refactor into its own package
+public final class Bitmap { 
   private final int width;
   private final int height;
   private final int[] rgbArray;
@@ -15,10 +16,10 @@ public class Bitmap {
   public static final int WHITE_PXL = (255<<24)|(255<<16)|(255<<8)|255;
   public static final int BLACK_PXL = 255<<24;
   
-  public Bitmap(Matrix bitMatrix) {
-    height = bitMatrix.row;
-    width = bitMatrix.col;
-    rgbArray = bitMatrix.toRGBArray();
+  public Bitmap(Matrix matrix) {
+    height = matrix.rowSize;
+    width = matrix.colSize;
+    rgbArray = matrix.toRGBArray();
   }
 
   public Bitmap(int[] rgbArray, int width, int height) {
@@ -33,6 +34,7 @@ public class Bitmap {
     ImageIO.write(bf, "bmp", new File(filename));
   }
 
+  /*
   public static Matrix read(String filename) throws IOException {
     BufferedImage image = ImageIO.read(new File(filename));
     int width = image.getWidth();
@@ -49,6 +51,7 @@ public class Bitmap {
     }
     return imgData;
   }
+  */
 
   public void print() throws IOException {
     BufferedImage bf = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY); 
