@@ -14,6 +14,9 @@ final class Challenge {
   private final TranslationTable outputTbl;
   private final TranslationTable midTbl;
   protected transient boolean challenged;
+
+  public final Commitment commitToRnd;
+  public final Commitment commitToInv;
   
   public static final int COMMIT_RANDOM = 0;
   public static final int COMMIT_INVERSE = 1;
@@ -26,7 +29,8 @@ final class Challenge {
     this.inputTbl = inputTbl;
     this.outputTbl = outputTbl;
 
-    //TODO: commitments
+    this.commitToRnd = new Commitment(randomTbl, randomPrm);
+    this.commitToInv = new Commitment(invTbl, invPrm);
 
     this.midTbl = new TranslationTable(inputTbl);
     midTbl.randomize(randomTbl);
@@ -34,32 +38,12 @@ final class Challenge {
     this.challenged = false;
   }
 
-
-  /**
-   * Commits to a FactorTable and a Permutation
-   * <p>NOTE: the commitment convention used is hash(permutation||random factors)</p>
-   * @param type either RANDOM or INVERSION 
-   * @return hash of commited values
-   */
-  protected String commit(int type) {
-    CryptoFactoryC factory = CryptoFactoryC.singleton();
-    String factor, prm; 
-    if (type == COMMIT_RANDOM) {
-      factor = randomTbl.toString();
-      prm = randomPrm.toString();
-    } else {
-      factor = invTbl.toString();
-      prm = invPrm.toString();
-    }
-    return factory.hash(factor + prm);
-  }
-
   protected ChallengeProof reveal(boolean isHead) {
     if (challenged) { throw new RuntimeException("ABORT: attempting to reveal the same challenge more than once"); }
     this.challenged = true;
     
-    if (isHead) return new ChallengeProof(randomTbl, randomPrm, inputTbl, midTbl);
-    else        return new ChallengeProof(invTbl, invPrm, midTbl, outputTbl);
+    if (isHead) return new ChallengeProof(randomTbl, randomPrm, inputTbl, midTbl, commitToRnd);
+    else        return new ChallengeProof(invTbl, invPrm, midTbl, outputTbl, commitToInv);
   }
 }
 

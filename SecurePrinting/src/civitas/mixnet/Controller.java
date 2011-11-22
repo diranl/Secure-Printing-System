@@ -14,7 +14,10 @@ import java.security.NoSuchProviderException;
 import java.util.Random;
 
 /**
- * Generic class used for instantiation and execution
+ * Generic class used for instantiation, coordination, and execution
+ * <p>NOTE: run this class to view a demo of the entire scheme</p>
+ *
+ * @author Diran Li
  */
 public class Controller {
 
@@ -30,11 +33,6 @@ public class Controller {
     System.out.println("================MIXNET=======================================================");
     Mixnet mixnet = new Mixnet(3, share);
     mixnet.execute(share);
-
-    /* TEST: make sure mixing was done correctly
-    TranslationTable decryptedTbl = mixnet.mixedTable.decrypt();
-    decryptedTbl.print();
-    */
 
     // Shadow Mix
     System.out.println("\n================SHADOW MIX=======================================================");

@@ -3,7 +3,7 @@ package civitas.mixnet;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 
-class Server {
+final class Server {
   protected final TranslationTable inputTbl;
   protected final TranslationTable outputTbl;
   protected final FactorTable factorTable;

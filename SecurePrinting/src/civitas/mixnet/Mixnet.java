@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Mixnet {
+public final class Mixnet {
   public final int serverNum; 
   public TranslationTable mixedTable;
   public List<Server> serverLst;
@@ -43,17 +43,10 @@ public class Mixnet {
       for (int idx=0; idx<CHALLENGE_NUM; idx++) {
         server.challenge();
         ChallengeProof proof = server.reveal(rand.nextInt(2)==0 ? true : false);
-        if (!verifyProof(proof)) throw new RuntimeException("did not verify");
+        if (!ChallengeProof.verifyProof(proof)) throw new RuntimeException("did not verify");
       }
     }
   }
 
-  public static boolean verifyProof(ChallengeProof proof) {
-    System.out.println("...verifying proof");
-    TranslationTable transformTbl = new TranslationTable(proof.inputTbl);
-    transformTbl.randomize(proof.factorTbl);
-    transformTbl.permute(proof.permutation);
-    return transformTbl.equals(proof.control);
-  }
 }
 

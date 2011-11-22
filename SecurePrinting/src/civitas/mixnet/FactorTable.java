@@ -81,7 +81,7 @@ public class FactorTable implements Serializable {
   /**
    * Serializes the object into a JSON equivalence using the GSON project by Google
    */
-  public String toString() {
+  public String toJson() {
     Gson gson = new Gson();
     return gson.toJson(this);
   }
