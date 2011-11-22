@@ -1,0 +1,80 @@
+package civitas.mixnet;
+
+import civitas.crypto.CryptoException;
+import civitas.crypto.ElGamalKeyPairShare;
+import civitas.crypto.concrete.CryptoFactoryC;
+import civitas.crypto.concrete.ElGamalCiphertextC;
+import civitas.crypto.concrete.ElGamalMsgC;
+import civitas.crypto.concrete.ElGamalParametersC;
+import civitas.mixnet.Printing.Printer;
+import civitas.util.CivitasBigInteger;
+import java.io.FileNotFoundException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.util.Random;
+
+/**
+ * Generic class used for instantiation and execution
+ */
+public class Controller {
+
+  public static void main(String args[]) throws CryptoException, NoSuchAlgorithmException, NoSuchProviderException, FileNotFoundException {
+    // 1. Initialize Mixnet with desired amount of servers
+    // 2. Perform the serial/chain computation to yield the mixed result
+    // 3. TODO (change): given an input, encrypt, perform PET to yield a CipherMessage
+    // 4. Perform the multi-party printing scheme
+    CryptoFactoryC factory = CryptoFactoryC.singleton();
+    ElGamalParametersC params = (ElGamalParametersC)factory.generateElGamalParameters();
+    ElGamalKeyPairShare share = factory.generateKeyPairShare(params);
+
+    System.out.println("================MIXNET=======================================================");
+    Mixnet mixnet = new Mixnet(3, share);
+    mixnet.execute(share);
+
+    /* TEST: make sure mixing was done correctly
+    TranslationTable decryptedTbl = mixnet.mixedTable.decrypt();
+    decryptedTbl.print();
+    */
+
+    // Shadow Mix
+    System.out.println("\n================SHADOW MIX=======================================================");
+    System.out.println("Shadow mix validation:");
+    mixnet.validate();
+
+    // Pick a random position in the table as the plaintext; this position maps to a letter 
+    // in the alphabet
+    System.out.println("\n================PET=======================================================");
+    int selection = new Random().nextInt(5);
+    ElGamalMsgC plaintxt = new ElGamalMsgC(CivitasBigInteger.valueOf(selection));
+    ElGamalCiphertextC cipher = (ElGamalCiphertextC)factory.elGamalEncrypt(share.pubKey, plaintxt);
+    System.out.println("Message to retrieve: " + selection);
+
+    // Perform PET 
+    TranslationTable mixedTbl = mixnet.mixedTable;
+    CipherMessage cipherMsg = mixedTbl.extract(cipher);
+    System.out.println("Retrieved message:");
+    cipherMsg.decryptPrint(share.privKey);
+
+
+    // Visual Crypto
+    System.out.println("\n================VISUAL CRYPTO=======================================================");
+    Printing printing = new Printing(3, cipherMsg, share.pubKey);
+    printing.execute();
+    printing.writeFinalization(share.privKey);
+
+    // printout of visual crypto
+    for (Printer printer : printing.printerLst) {
+      printer.print(share.privKey);
+    }
+    System.out.println("finalization layer:");
+    printing.finalizedMsg.decryptPrint(share.privKey);
+    // perform xor on plaintexts and compare with input msg
+    Matrix result = new Matrix(cipherMsg.rowSize, cipherMsg.colSize);
+    for (Printer printer : printing.printerLst) {
+      result.xor(printer.share, true);
+    }
+    result.xor(printing.finalizedMsg.decryptToMatrix(share.privKey), true);
+    System.out.println("\nResulting matrix:");
+    result.print();
+  }
+}

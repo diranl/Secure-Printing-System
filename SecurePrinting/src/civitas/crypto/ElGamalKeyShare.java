@@ -6,9 +6,6 @@
  */ 
 package civitas.crypto;
 
-import civitas.common.*;
-import java.io.*;
-
 /**
  * A teller's share of a public key. Note that a ElGamalKeyPairShare does not contain
  * the proof objects, and does contain the private key share too.
