@@ -1,4 +1,4 @@
-package secureprinting.visual;
+package secureprinting.visualcrypto;
 
 import java.util.BitSet;
 import java.util.Stack;

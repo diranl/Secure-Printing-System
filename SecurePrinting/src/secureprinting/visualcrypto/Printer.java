@@ -1,4 +1,4 @@
-package secureprinting.visual;
+package secureprinting.visualcrypto;
 
 import civitas.crypto.CryptoException;
 import civitas.crypto.ElGamalPrivateKey;
@@ -28,7 +28,6 @@ public final class Printer {
     System.out.println("..share created to: share-" + idx + ".bmp");
   }
 
-  @SuppressWarnings("For testing purposes only")
   protected void print(ElGamalPrivateKey privKey) {
     try {
       System.out.println("Random share:");

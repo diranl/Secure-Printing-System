@@ -1,4 +1,4 @@
-package secureprinting.visual;
+package secureprinting.visualcrypto;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;

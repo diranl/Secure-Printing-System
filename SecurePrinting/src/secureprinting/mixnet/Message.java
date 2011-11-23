@@ -1,6 +1,6 @@
 package secureprinting.mixnet;
 
-import secureprinting.visual.Matrix;
+import secureprinting.visualcrypto.Matrix;
 import java.io.Serializable;
 import java.util.BitSet;
 

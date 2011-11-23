@@ -1,4 +1,4 @@
-package secureprinting.visual;
+package secureprinting.visualcrypto;
 
 import com.google.gson.Gson;
 import java.io.IOException;

@@ -10,8 +10,9 @@ import secureprinting.mixnet.CipherMessage;
 import secureprinting.mixnet.Mixnet;
 import secureprinting.mixnet.TranslationTable;
 import civitas.util.CivitasBigInteger;
-import secureprinting.visual.ObliviousPrint;
+import secureprinting.visualcrypto.ObliviousPrint;
 import java.io.FileNotFoundException;
+import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.Random;
@@ -22,7 +23,13 @@ import java.util.Random;
  *
  * @author Diran Li
  */
-public class Controller {
+public final class Controller {
+
+  private static Random rnd = new Random();
+
+  public static String nextId() {
+    return ("#" + rnd.nextInt(1000));
+  }
 
   public static void main(String args[]) throws CryptoException, NoSuchAlgorithmException, NoSuchProviderException, FileNotFoundException {
     // 1. Initialize Mixnet with desired amount of servers

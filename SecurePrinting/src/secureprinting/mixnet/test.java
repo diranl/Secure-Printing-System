@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import com.google.gson.Gson;
+import secureprinting.Controller;
 
 public class test {
   private static final int BYTE_TO_BIT = 8; 
@@ -230,7 +231,7 @@ public class test {
     System.out.println(a+b);
     */
 
-    /* TEST: object part 2; commitment*/
+    /* TEST: object part 2; commitment
     CryptoFactoryC factory = CryptoFactoryC.singleton();
     ElGamalParametersC params = (ElGamalParametersC)factory.generateElGamalParameters();
     ElGamalKeyPairShare share = factory.generateKeyPairShare(params);
@@ -241,5 +242,10 @@ public class test {
     String c = gson.toJson(copiedTbl);
     System.out.println("hash i: "+factory.hash(i));
     System.out.println("hash c: "+factory.hash(c));
+    */
+
+    /* TEST: random ID*/
+    String id = Controller.nextId();
+    System.out.println("ID: " + id);
   }
 }

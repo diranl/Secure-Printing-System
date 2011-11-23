@@ -1,4 +1,4 @@
-package secureprinting.visual;
+package secureprinting.visualcrypto;
 
 //TODO: refactor out of the mixnet package
 

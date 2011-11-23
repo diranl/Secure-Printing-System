@@ -1,7 +1,7 @@
 package secureprinting.mixnet;
 
 import civitas.crypto.concrete.CryptoFactoryC;
-import secureprinting.visual.Matrix;
+import secureprinting.visualcrypto.Matrix;
 
 public final class Commitment {
   public final String value;
