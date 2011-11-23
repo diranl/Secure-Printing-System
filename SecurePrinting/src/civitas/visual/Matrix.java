@@ -115,15 +115,23 @@ public class Matrix {
     return rgbArray;
   }
 
+  /**
+   * Serializes the object into a JSON equivalence using the GSON project by Google
+   */
+  public String toJson() {
+    Gson gson = new Gson();
+    return gson.toJson(this);
+  }
+
   public Matrix xor(Matrix B, boolean overwrite) {
-    return _operation(TYPE_XOR, B, overwrite);
+    return operation(TYPE_XOR, B, overwrite);
   }
 
   public Matrix or(Matrix B, boolean overwrite) {
-    return _operation(TYPE_OR, B, overwrite);
+    return operation(TYPE_OR, B, overwrite);
   }
   
-  private Matrix _operation(int type, Matrix B, boolean overwrite) {
+  private Matrix operation(int type, Matrix B, boolean overwrite) {
     Matrix A = this;
     if (B.rowSize != A.rowSize || B.colSize != A.colSize) throw new RuntimeException("Illegal matrix dimensions.");
 

@@ -16,6 +16,11 @@ final class Commitment {
    this.value = factory.hash(factorTbl.toJson() + prm.toJson());
   }
 
+  public Commitment(Matrix matrix) {
+   CryptoFactoryC factory = CryptoFactoryC.singleton();
+   this.value = factory.hash(matrix.toJson());
+  }
+
   public static boolean verifyCommit(FactorTable factorTbl, Permutation prm, Commitment commit) {
    CryptoFactoryC factory = CryptoFactoryC.singleton();
    String hash = factory.hash(factorTbl.toJson() + prm.toJson());

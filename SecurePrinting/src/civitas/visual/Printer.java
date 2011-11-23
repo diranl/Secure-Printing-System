@@ -10,10 +10,12 @@ import java.security.NoSuchProviderException;
 public final class Printer {
   protected final Matrix share;
   public final CipherMessage cipher;
+  public final Commitment commitToShare;
 
   public Printer(CipherMessage cipher, ElGamalPublicKey pubKey) throws NoSuchAlgorithmException, NoSuchProviderException {
     this.share = Matrix.random(cipher.rowSize, cipher.colSize);
     this.cipher = cipher.xor(this.share, pubKey);
+    this.commitToShare = new Commitment(share);
   }
   public Printer(Printer inputPrinter, ElGamalPublicKey pubKey) throws NoSuchAlgorithmException, NoSuchProviderException {
     this(inputPrinter.cipher, pubKey);
