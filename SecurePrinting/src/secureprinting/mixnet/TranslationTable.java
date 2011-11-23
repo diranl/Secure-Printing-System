@@ -1,4 +1,4 @@
-package civitas.mixnet;
+package secureprinting.mixnet;
 
 import civitas.crypto.CryptoException;
 import civitas.crypto.ElGamalCiphertext;

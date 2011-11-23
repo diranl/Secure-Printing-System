@@ -1,4 +1,4 @@
-package civitas.visual;
+package secureprinting.visual;
 
 import com.google.gson.Gson;
 import java.io.IOException;

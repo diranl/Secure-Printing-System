@@ -6,10 +6,6 @@
  */ 
 package civitas.crypto;
 
-import civitas.common.Util;
-import java.io.*;
-import java.math.BigInteger;
-
 public interface ElGamalSignedCiphertext extends ElGamalCiphertext {
     
 }

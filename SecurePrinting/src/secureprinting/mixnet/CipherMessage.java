@@ -1,4 +1,4 @@
-package civitas.mixnet;
+package secureprinting.mixnet;
 
 import civitas.crypto.CryptoException;
 import civitas.util.CivitasBigInteger;
@@ -11,7 +11,7 @@ import civitas.crypto.concrete.CryptoFactoryC;
 import civitas.crypto.concrete.ElGamalCiphertextC;
 import civitas.crypto.concrete.ElGamalParametersC;
 import civitas.crypto.concrete.ElGamalReencryptFactorC;
-import civitas.visual.Matrix;
+import secureprinting.visual.Matrix;
 import java.util.ArrayList;
 import java.util.List;
 

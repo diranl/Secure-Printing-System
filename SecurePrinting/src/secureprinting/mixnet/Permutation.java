@@ -1,4 +1,4 @@
-package civitas.mixnet;
+package secureprinting.mixnet;
 
 import com.google.gson.Gson;
 import java.io.FileNotFoundException;

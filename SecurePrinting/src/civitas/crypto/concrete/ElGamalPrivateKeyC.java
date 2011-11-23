@@ -6,7 +6,6 @@
  */ 
 package civitas.crypto.concrete;
 
-import java.io.*;
 
 /*TODO:trim
 import jif.lang.Label;

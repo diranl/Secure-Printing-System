@@ -1,6 +1,6 @@
-package civitas.mixnet;
+package secureprinting.mixnet;
 
-import civitas.visual.Matrix;
+import secureprinting.visual.Matrix;
 import java.io.Serializable;
 import java.util.BitSet;
 

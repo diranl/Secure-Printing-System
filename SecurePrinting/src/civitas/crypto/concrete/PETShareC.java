@@ -6,9 +6,6 @@
  */ 
 package civitas.crypto.concrete;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Reader;
 
 /*TODO: trim
 import jif.lang.Label;

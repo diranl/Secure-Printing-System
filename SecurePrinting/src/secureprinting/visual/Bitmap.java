@@ -1,4 +1,4 @@
-package civitas.visual;
+package secureprinting.visual;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;

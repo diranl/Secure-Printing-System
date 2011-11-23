@@ -1,4 +1,4 @@
-package civitas.mixnet;
+package secureprinting;
 
 import civitas.crypto.CryptoException;
 import civitas.crypto.ElGamalKeyPairShare;
@@ -6,10 +6,11 @@ import civitas.crypto.concrete.CryptoFactoryC;
 import civitas.crypto.concrete.ElGamalCiphertextC;
 import civitas.crypto.concrete.ElGamalMsgC;
 import civitas.crypto.concrete.ElGamalParametersC;
+import secureprinting.mixnet.CipherMessage;
+import secureprinting.mixnet.Mixnet;
+import secureprinting.mixnet.TranslationTable;
 import civitas.util.CivitasBigInteger;
-import civitas.visual.Matrix;
-import civitas.visual.Printer;
-import civitas.visual.ObliviousPrint;
+import secureprinting.visual.ObliviousPrint;
 import java.io.FileNotFoundException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -59,7 +60,7 @@ public class Controller {
     // Visual Crypto
     System.out.println("\n================VISUAL CRYPTO=======================================================");
     ObliviousPrint printing = new ObliviousPrint(3, cipherMsg, share.pubKey);
-    printing.execute(share.privKey);
+    printing.execute();
     printing.writeFinalization(share.privKey);
   }
 }

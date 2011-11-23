@@ -1,4 +1,4 @@
-package civitas.mixnet;
+package secureprinting.mixnet;
 
 final class ChallengeProof {
   public final FactorTable factorTbl;

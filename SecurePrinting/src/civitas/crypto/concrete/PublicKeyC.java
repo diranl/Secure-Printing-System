@@ -6,7 +6,6 @@
  */ 
 package civitas.crypto.concrete;
 
-import java.io.*;
 
 /*TODO: trim
 import jif.lang.*;
@@ -14,7 +13,6 @@ import civitas.common.Util;
  * 
  */
 import civitas.crypto.*;
-import civitas.crypto.common.Base64;
 
 public class PublicKeyC implements PublicKey {
     private static final int AUTHENTICATION_NONCE_LENGTH = 64;

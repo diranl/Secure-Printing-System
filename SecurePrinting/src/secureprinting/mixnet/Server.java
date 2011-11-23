@@ -1,4 +1,4 @@
-package civitas.mixnet;
+package secureprinting.mixnet;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;

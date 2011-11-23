@@ -1,4 +1,4 @@
-package civitas.mixnet;
+package secureprinting.mixnet;
 
 import civitas.crypto.ElGamalReencryptFactor;
 import civitas.crypto.concrete.CryptoFactoryC;

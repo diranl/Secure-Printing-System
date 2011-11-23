@@ -1,4 +1,4 @@
-package civitas.visual;
+package secureprinting.visual;
 
 import java.util.BitSet;
 import java.util.Stack;

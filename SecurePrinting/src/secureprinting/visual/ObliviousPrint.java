@@ -1,4 +1,4 @@
-package civitas.visual;
+package secureprinting.visual;
 
 //TODO: refactor out of the mixnet package
 
@@ -6,31 +6,31 @@ import civitas.crypto.CryptoException;
 import civitas.crypto.ElGamalPrivateKey;
 import civitas.crypto.ElGamalPublicKey;
 import civitas.crypto.concrete.ElGamalPrivateKeyC;
-import civitas.mixnet.CipherMessage;
+import secureprinting.mixnet.CipherMessage;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Random;
 
 public final class ObliviousPrint {
   public final int printerNum;
   public final CipherMessage initialMsg;
   public final ElGamalPublicKey pubKey;
   public final BasisMatrix basis;
+  public final String ID;
   public CipherMessage finalizedMsg;
-
   public List<Printer> printerLst; //FIXME: currently only useful for testing purposes
 
   public ObliviousPrint(int printerNum, CipherMessage cipher, ElGamalPublicKey pubKey) {
     this.printerNum = printerNum;
     this.initialMsg = cipher;
     this.pubKey = pubKey;
-    this.basis = new BasisMatrix(printerNum+1/*Extra party for finalization*/, BasisMatrix.DEFAULT);
+    this.basis = new BasisMatrix(printerNum+1/*Require an extra party for finalization*/, BasisMatrix.DEFAULT);
+    this.ID = "#" + (new Random()).nextInt(100);
   }
   
-  public void execute(ElGamalPrivateKey privKey /*FIXME: privKey is used for debugging only*/) throws NoSuchAlgorithmException, NoSuchProviderException {
+  public void execute() throws NoSuchAlgorithmException, NoSuchProviderException {
     printerLst = new ArrayList<Printer>(printerNum);
     Printer newPrinter = null;
     for (int idx=0; idx<printerNum; idx++) {
@@ -42,7 +42,7 @@ public final class ObliviousPrint {
     }
     this.finalizedMsg = newPrinter.cipher;
 
-    //FIXME: Debugging print statements
+    /*FIXME: Start of debugging print statements
     int rowSize = 0, colSize = 0;
     for (Printer printer : this.printerLst) {
       printer.print(privKey);
@@ -65,6 +65,8 @@ public final class ObliviousPrint {
     result.xor(this.finalizedMsg.decryptToMatrix(privKey), true);
     System.out.println("\nResulting matrix:");
     result.print();
+    // End of print statements
+    */
   }
 
   public void writeFinalization(ElGamalPrivateKey privKey) {

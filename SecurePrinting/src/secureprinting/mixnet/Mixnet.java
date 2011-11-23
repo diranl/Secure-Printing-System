@@ -1,4 +1,4 @@
-package civitas.mixnet;
+package secureprinting.mixnet;
 
 import civitas.crypto.ElGamalKeyPairShare;
 import java.io.FileNotFoundException;
