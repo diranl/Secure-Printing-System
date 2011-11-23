@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public final class Printing {
+public final class ObliviousPrint {
   public final int printerNum;
   public final CipherMessage initialMsg;
   public final ElGamalPublicKey pubKey;
@@ -23,7 +23,7 @@ public final class Printing {
 
   public List<Printer> printerLst; //FIXME: currently only useful for testing purposes
 
-  public Printing(int printerNum, CipherMessage cipher, ElGamalPublicKey pubKey) {
+  public ObliviousPrint(int printerNum, CipherMessage cipher, ElGamalPublicKey pubKey) {
     this.printerNum = printerNum;
     this.initialMsg = cipher;
     this.pubKey = pubKey;

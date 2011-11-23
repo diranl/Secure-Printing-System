@@ -9,7 +9,7 @@ import civitas.crypto.concrete.ElGamalParametersC;
 import civitas.util.CivitasBigInteger;
 import civitas.visual.Matrix;
 import civitas.visual.Printer;
-import civitas.visual.Printing;
+import civitas.visual.ObliviousPrint;
 import java.io.FileNotFoundException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -58,7 +58,7 @@ public class Controller {
 
     // Visual Crypto
     System.out.println("\n================VISUAL CRYPTO=======================================================");
-    Printing printing = new Printing(3, cipherMsg, share.pubKey);
+    ObliviousPrint printing = new ObliviousPrint(3, cipherMsg, share.pubKey);
     printing.execute(share.privKey);
     printing.writeFinalization(share.privKey);
   }

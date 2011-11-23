@@ -1,8 +1,9 @@
 package civitas.mixnet;
 
 import civitas.crypto.concrete.CryptoFactoryC;
+import civitas.visual.Matrix;
 
-final class Commitment {
+public final class Commitment {
   public final String value;
 
   /**

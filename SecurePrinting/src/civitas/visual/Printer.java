@@ -4,6 +4,7 @@ import civitas.crypto.CryptoException;
 import civitas.crypto.ElGamalPrivateKey;
 import civitas.crypto.ElGamalPublicKey;
 import civitas.mixnet.CipherMessage;
+import civitas.mixnet.Commitment;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 
