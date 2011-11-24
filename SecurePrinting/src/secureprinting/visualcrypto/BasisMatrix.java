@@ -1,5 +1,6 @@
 package secureprinting.visualcrypto;
 
+import secureprinting.Matrix;
 import java.util.BitSet;
 import java.util.Stack;
 
@@ -8,7 +9,7 @@ public class BasisMatrix extends Matrix {
   public static final String NON_SQUARE = "-nonsquare";
   public static final String RECTANGLE_COMPLETE = "-rectcomplete";
 
-  public static final String DEFAULT = RECTANGLE_COMPLETE;
+  public static final String DEFAULT_METHOD = RECTANGLE_COMPLETE;
 
   private String method;
 
@@ -16,6 +17,9 @@ public class BasisMatrix extends Matrix {
     super(n, (int)Math.pow(2, n-1));
     this.method = method;
     permute();
+  }
+  public BasisMatrix(int n) {
+    this(n, DEFAULT_METHOD);
   }
 
   private void permute() {

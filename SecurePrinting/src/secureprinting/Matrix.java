@@ -1,4 +1,4 @@
-package secureprinting.visualcrypto;
+package secureprinting;
 
 import com.google.gson.Gson;
 import java.io.IOException;
@@ -7,6 +7,8 @@ import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.util.BitSet;
 import java.util.Random;
+import secureprinting.visualcrypto.BasisMatrix;
+import secureprinting.visualcrypto.Bitmap;
 
 public class Matrix {
   public final int rowSize;

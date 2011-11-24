@@ -43,7 +43,7 @@ public final class Mixnet {
       for (int idx=0; idx<CHALLENGE_NUM; idx++) {
         server.challenge();
         ChallengeProof proof = server.reveal(rand.nextInt(2)==0 ? true : false);
-        if (!ChallengeProof.verifyProof(proof)) throw new RuntimeException("did not verify");
+        if (!ChallengeProof.verifyProof(proof)) throw new RuntimeException("ChallengeProof did not verify");
       }
     }
   }

@@ -10,12 +10,11 @@ import secureprinting.mixnet.CipherMessage;
 import secureprinting.mixnet.Mixnet;
 import secureprinting.mixnet.TranslationTable;
 import civitas.util.CivitasBigInteger;
-import secureprinting.visualcrypto.ObliviousPrint;
 import java.io.FileNotFoundException;
-import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.Random;
+import secureprinting.visualcrypto.ObliviousPrint;
 
 /**
  * Generic class used for instantiation, coordination, and execution
@@ -24,7 +23,6 @@ import java.util.Random;
  * @author Diran Li
  */
 public final class Controller {
-
   private static Random rnd = new Random();
 
   public static String nextId() {
@@ -66,8 +64,9 @@ public final class Controller {
 
     // Visual Crypto
     System.out.println("\n================VISUAL CRYPTO=======================================================");
-    ObliviousPrint printing = new ObliviousPrint(3, cipherMsg, share.pubKey);
-    printing.execute();
-    printing.writeFinalization(share.privKey);
+    ObliviousPrint op = new ObliviousPrint(cipherMsg, share.pubKey);
+    op.execute();
+    op.cutAndChoose();
+    op.finalization(share.privKey);
   }
 }

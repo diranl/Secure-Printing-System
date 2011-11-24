@@ -11,7 +11,7 @@ import civitas.crypto.concrete.CryptoFactoryC;
 import civitas.crypto.concrete.ElGamalCiphertextC;
 import civitas.crypto.concrete.ElGamalParametersC;
 import civitas.crypto.concrete.ElGamalReencryptFactorC;
-import secureprinting.visualcrypto.Matrix;
+import secureprinting.Matrix;
 import java.util.ArrayList;
 import java.util.List;
 

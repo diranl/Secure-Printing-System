@@ -1,5 +1,6 @@
 package secureprinting.mixnet;
 
+import secureprinting.Commitment;
 import civitas.crypto.concrete.CryptoFactoryC;
 import civitas.crypto.concrete.ElGamalParametersC;
 import java.security.NoSuchAlgorithmException;

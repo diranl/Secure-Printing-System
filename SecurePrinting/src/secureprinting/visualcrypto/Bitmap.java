@@ -1,5 +1,6 @@
 package secureprinting.visualcrypto;
 
+import secureprinting.Matrix;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.File;
@@ -7,7 +8,6 @@ import javax.imageio.ImageIO;
 import java.awt.Image;
 import java.util.Arrays;
 
-//TODO: refactor into its own package
 public final class Bitmap { 
   private final int width;
   private final int height;

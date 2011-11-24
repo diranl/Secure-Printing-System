@@ -12,7 +12,7 @@ import java.util.Random;
 import civitas.crypto.CryptoError;
 import civitas.util.CivitasBigInteger;
 
-class CryptoAlgs { 
+final class CryptoAlgs { 
 	protected final static CivitasBigInteger ZERO = CivitasBigInteger.ZERO;
 	protected final static CivitasBigInteger ONE = CivitasBigInteger.ONE;
 	protected final static CivitasBigInteger TWO = CivitasBigInteger.valueOf(2);
