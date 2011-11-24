@@ -1,12 +1,11 @@
 package secureprinting.visualcrypto;
 
-import secureprinting.Matrix;
+
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.File;
 import javax.imageio.ImageIO;
-import java.awt.Image;
-import java.util.Arrays;
+import secureprinting.Matrix;
 
 public final class Bitmap { 
   private final int width;
@@ -34,7 +33,6 @@ public final class Bitmap {
     ImageIO.write(bf, "bmp", new File(filename));
   }
 
-  /*
   public static Matrix read(String filename) throws IOException {
     BufferedImage image = ImageIO.read(new File(filename));
     int width = image.getWidth();
@@ -45,13 +43,11 @@ public final class Bitmap {
 
   public static Matrix toMatrix(int width, int height, int[] rgbArray) {
     Matrix imgData = new Matrix(height, width);
-    for (int idx=0, rowIdx=0, colIdx=0; idx<rgbArray.length; idx++, colIdx++) {
-      if (colIdx != 0 && colIdx % width == 0) { colIdx = 0; rowIdx++; }
-      imgData.matrix[rowIdx][colIdx] = (rgbArray[idx] == WHITE_PXL) ? 0 : 1;
+    for (int idx=0; idx<rgbArray.length; idx++) {
+      if (rgbArray[idx] == BLACK_PXL) imgData.set(idx);
     }
     return imgData;
   }
-  */
 
   public void print() throws IOException {
     BufferedImage bf = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY); 

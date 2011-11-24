@@ -30,14 +30,14 @@ public final class ObliviousPrint {
 
   public void execute() throws NoSuchAlgorithmException, NoSuchProviderException {
     for (int idx=0; idx<driverNum; idx++) {
-      PrinterDriver driver = new PrinterDriver(initialCipher, pubKey);
+      PrinterDriver driver = new PrinterDriver(2, initialCipher, pubKey);
       driver.execute();
       driverLst.add(driver);
     }
   }
   
   public void cutAndChoose() {
-    System.out.println("Cut and choose:");
+    System.out.println("\nCut and choose:");
     SecureRandom rnd = new SecureRandom();
     this.choose = rnd.nextInt(driverNum);
     for (int idx=0; idx<driverNum; idx++) {

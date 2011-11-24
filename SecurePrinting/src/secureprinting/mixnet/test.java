@@ -19,6 +19,11 @@ import java.util.List;
 import java.util.Random;
 import com.google.gson.Gson;
 import secureprinting.Controller;
+import secureprinting.Matrix;
+import secureprinting.Matrix;
+import secureprinting.mixnet.Permutation;
+import secureprinting.visualcrypto.BasisMatrix;
+import secureprinting.visualcrypto.Bitmap;
 
 public class test {
   private static final int BYTE_TO_BIT = 8; 
@@ -143,7 +148,7 @@ public class test {
 
     /* TEST: basis matrix, matrix augmentation
     Matrix rand = Matrix.random(4,4);
-    BasisMatrix basis = new BasisMatrix(3, BasisMatrix.DEFAULT);
+    BasisMatrix basis = new BasisMatrix(3, BasisMatrix.DEFAULT_METHOD);
     Matrix augmented = rand.augment(basis, 0);
     System.out.println("Random matrix:");
     rand.print();
@@ -151,10 +156,24 @@ public class test {
     basis.print();
     System.out.println("Augmented matrix:");
     augmented.print();
+    augmented.write("augmented");
+    System.out.println("written to augmented.bmp");
     Matrix matrix = new Matrix(3,4);
     matrix.set(1,3,1);
     matrix.print();
     */
+
+    /* TEST: share printing debugging*/
+    BasisMatrix basis = new BasisMatrix(4);
+    System.out.println("basis: ");
+    basis.print();
+    Matrix share = Matrix.random(10, 10);
+    System.out.println("share:" );
+    share.print();
+    System.out.println("augemented share:" );
+    Matrix augmented = share.augment(basis, 0);
+    augmented.print();
+    augmented.write("random");
 
     /* TEST: arraylist
     try {
@@ -244,8 +263,9 @@ public class test {
     System.out.println("hash c: "+factory.hash(c));
     */
 
-    /* TEST: random ID*/
+    /* TEST: random ID
     String id = Controller.nextId();
     System.out.println("ID: " + id);
+    */
   }
 }

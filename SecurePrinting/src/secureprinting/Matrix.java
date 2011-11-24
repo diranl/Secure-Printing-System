@@ -15,6 +15,9 @@ public class Matrix {
   public final int colSize;
   protected final BitSet matrix;
 
+  public static final boolean OVERWRITE = true;
+  public static final boolean NOOVERWRITE = false;
+
   private final int TYPE_XOR = 0;
   private final int TYPE_OR  = 1;
 
@@ -28,6 +31,12 @@ public class Matrix {
     this.rowSize = rowSize;
     this.colSize = colSize;
     this.matrix = set;
+  }
+
+  public Matrix(Matrix copy) {
+    this.rowSize = copy.rowSize;
+    this.colSize = copy.colSize;
+    this.matrix = (BitSet)copy.matrix.clone();
   }
 
   public boolean get(int rowIdx, int colIdx) {
@@ -80,7 +89,7 @@ public class Matrix {
     Matrix _blackPxl = basis.retrieve(partyIdx, 1);
     int[] pxlDim = basis.pxlDim();
     Matrix augmented = new Matrix(rowSize*pxlDim[0], colSize*pxlDim[1]);
-    
+
     for (int rowIdx=0; rowIdx<rowSize; rowIdx++) {
       for (int colIdx=0; colIdx<colSize; colIdx++) {
         if (this.get(rowIdx, colIdx)) augmented.insert(rowIdx*pxlDim[0], colIdx*pxlDim[1], _blackPxl);
@@ -139,7 +148,7 @@ public class Matrix {
     if (B.rowSize != A.rowSize || B.colSize != A.colSize) throw new RuntimeException("Illegal matrix dimensions.");
 
     Matrix C = this;
-    if (overwrite) {
+    if (overwrite == OVERWRITE) {
       if      (type == TYPE_XOR) this.matrix.xor(B.matrix);
       else if (type == TYPE_OR)  this.matrix.or(B.matrix);
       else throw new RuntimeException("Illegal operation type: " + type);

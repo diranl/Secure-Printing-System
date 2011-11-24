@@ -81,19 +81,19 @@ public class BasisMatrix extends Matrix {
   private Matrix rectcomplete(BitSet row) {
     int _rowSize = 1, _colSize = super.colSize;
     for (; _rowSize*2 <= _colSize/2; _rowSize*=2, _colSize/=2) {}
-    Matrix matrix = new Matrix(_rowSize, _colSize);
 
+    Matrix matrix;
     if (_rowSize == _colSize) {
       // Perfect square 
-      for (int rowIdx=0, colIdx=0, idx=0; idx<row.size(); colIdx++, idx++) {
-        if (colIdx == _colSize) { colIdx = 0; rowIdx++; }
-        matrix.set(rowIdx, colIdx, row.get(idx) ? 1 : 0);
+      matrix = new Matrix(_rowSize, _colSize);
+      for (int idx=0, length=_rowSize*_colSize; idx<length; idx++) {
+        if (row.get(idx)) matrix.set(idx);
       }
     } else {
       // Needs squaring through doubling
-      for (int rowIdx=0, colIdx=0, idx=0; idx<row.size()*2; colIdx++, idx++) {
-        if (colIdx == _colSize)  { colIdx = 0; rowIdx++; }
-        matrix.set(rowIdx, colIdx, row.get(idx % row.size()) ? 1 : 0);
+      matrix = new Matrix(_rowSize*2, _colSize);
+      for (int idx=0, length=_rowSize*_colSize; idx<length*2; idx++) {
+        if (row.get(idx % length)) matrix.set(idx);
       }
     }
     return matrix;
@@ -104,14 +104,14 @@ public class BasisMatrix extends Matrix {
     int _rowSize = dim[0], _colSize = dim[1];
     Matrix matrix = new Matrix(_rowSize, _colSize);
 
-    int rowIdx=0, colIdx=0;
+    int rowIdx=0, colIdx=0, length=_rowSize*_colSize;
     /* Transcribe the array elements into matrix */
-    for (int idx=0; idx<row.size(); idx++, colIdx++) {
+    for (int idx=0; idx<row.size()/*FIXME: row.size() might not be accurate*/; idx++, colIdx++) {
       if (colIdx == _colSize) { colIdx = 0; rowIdx++; }
       matrix.set(rowIdx, colIdx, row.get(idx) ? 1 : 0);
     }
     /* Insert padding if necessary */
-    for (int idx=row.size(); idx<_rowSize*_colSize; idx++, colIdx++) {
+    for (int idx=row.size()/*FIXME: row.size() might not be accurate*/; idx<_rowSize*_colSize; idx++, colIdx++) {
       if (colIdx == _colSize) { colIdx = 0; rowIdx++; }
       matrix.set(rowIdx, colIdx, 1);
     }

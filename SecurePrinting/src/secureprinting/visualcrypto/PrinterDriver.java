@@ -40,7 +40,7 @@ final class PrinterDriver {
     printerLst = new ArrayList<Printer>(printerNum);
     Printer newPrinter = null;
     for (int idx=0; idx<printerNum; idx++) {
-      System.out.println("...initializing printer: " + idx);
+      System.out.println("Initializing printer: " + idx);
       if (idx == 0) newPrinter = new Printer(initialCipher, pubKey, ID);
       else newPrinter = new Printer(printerLst.get(idx-1), pubKey, ID);
       printerLst.add(newPrinter);

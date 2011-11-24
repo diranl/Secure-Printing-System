@@ -1,5 +1,6 @@
 package secureprinting.mixnet;
 
+import secureprinting.Parser;
 import civitas.crypto.CryptoException;
 import civitas.crypto.ElGamalCiphertext;
 import civitas.crypto.ElGamalKeyPairShare;
@@ -209,11 +210,11 @@ public class TranslationTable implements Serializable {
 
   @SuppressWarnings("Testing")
   public static TranslationTable initTable(ElGamalKeyPairShare share) throws FileNotFoundException {
-    Message a = new CipherMessage(1, Parser.parse("a.txt"), share);
-    Message e = new CipherMessage(2, Parser.parse("e.txt"), share);
-    Message f = new CipherMessage(3, Parser.parse("f.txt"), share);
-    Message n = new CipherMessage(4, Parser.parse("n.txt"), share);
-    Message t = new CipherMessage(5, Parser.parse("t.txt"), share);
+    Message a = new CipherMessage(1, Parser.parseCsv("a.txt"), share);
+    Message e = new CipherMessage(2, Parser.parseCsv("e.txt"), share);
+    Message f = new CipherMessage(3, Parser.parseCsv("f.txt"), share);
+    Message n = new CipherMessage(4, Parser.parseCsv("n.txt"), share);
+    Message t = new CipherMessage(5, Parser.parseCsv("t.txt"), share);
     List<Message> lst = new ArrayList<Message>(4);
     lst.add(a);
     lst.add(e);
