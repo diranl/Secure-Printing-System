@@ -2,11 +2,14 @@ package secureprinting.visualcrypto;
 
 import civitas.crypto.ElGamalPrivateKey;
 import civitas.crypto.ElGamalPublicKey;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import secureprinting.mixnet.CipherMessage;
 
 public final class ObliviousPrint {
@@ -47,6 +50,12 @@ public final class ObliviousPrint {
   }
 
   public void finalization(ElGamalPrivateKey privKey) {
-    driverLst.get(choose).writeFinalization(privKey);
+    PrinterDriver driver = driverLst.get(choose);
+    driver.writeFinalization(privKey);
+    try {
+      driver.writeOverlay(); /*NOTE: overlaying shares used for debugging purposes only*/
+    } catch (IOException ex) {
+      ex.printStackTrace();
+    }
   }
 }

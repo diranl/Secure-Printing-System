@@ -1,5 +1,6 @@
 package secureprinting.visualcrypto;
 
+import java.io.IOException;
 import secureprinting.Matrix;
 import civitas.crypto.CryptoException;
 import civitas.crypto.ElGamalPrivateKey;
@@ -19,18 +20,22 @@ final class PrinterDriver {
   public final CipherMessage initialCipher;
   public final ElGamalPublicKey pubKey;
   public final BasisMatrix basis;
-  public final String ID;
+  public final String Id;
+
   public CipherMessage finalizedMsg;
   public List<Printer> printerLst; 
   public boolean revealed;
+
   public final static int DEFAULT_PRINTER_NUM = 3;
+  public final static String FINALIZATION_PREFIX = "finalization-";
+  public final static String OVERLAY_PREFIX = "overlay-";
 
   public PrinterDriver(int printerNum, CipherMessage cipher, ElGamalPublicKey pubKey) {
     this.printerNum = printerNum;
     this.initialCipher = cipher;
     this.pubKey = pubKey;
     this.basis = new BasisMatrix(printerNum+1/*Require an extra party for finalization*/);
-    this.ID = Controller.nextId();
+    this.Id = Controller.nextId();
   }
   public PrinterDriver(CipherMessage cipher, ElGamalPublicKey pubKey) {
     this(DEFAULT_PRINTER_NUM, cipher, pubKey);
@@ -41,8 +46,8 @@ final class PrinterDriver {
     Printer newPrinter = null;
     for (int idx=0; idx<printerNum; idx++) {
       System.out.println("Initializing printer: " + idx);
-      if (idx == 0) newPrinter = new Printer(initialCipher, pubKey, ID);
-      else newPrinter = new Printer(printerLst.get(idx-1), pubKey, ID);
+      if (idx == 0) newPrinter = new Printer(initialCipher, pubKey, Id);
+      else newPrinter = new Printer(printerLst.get(idx-1), pubKey, Id);
       printerLst.add(newPrinter);
       newPrinter.write(basis, idx);
     }
@@ -50,7 +55,7 @@ final class PrinterDriver {
   }
 
   public void reveal() {
-    System.out.println("..revealing: " + ID);
+    System.out.println("..revealing: " + Id);
     for (Printer printer : printerLst) {
       Matrix share = printer.decommit();
       if (!Commitment.verifyCommit(share, printer.commitToShare)) throw new RuntimeException("Invalid decommitment to Printer.share");
@@ -64,8 +69,21 @@ final class PrinterDriver {
     System.out.println("...decrypting finalization layer");
     Matrix finalization = finalizedMsg.decryptToMatrix(privKey);
     Matrix augmented = finalization.augment(basis, printerNum);
-    String filename = "finalization-" + ID;
+    String filename = FINALIZATION_PREFIX + Id;
     augmented.write(filename);
-    System.out.println("..finalization layer written to: " + filename + ".bmp");
+    System.out.println("..finalization layer written to: " + filename + Bitmap.BMP_SUFFIX);
+  }
+
+  public void writeOverlay() throws IOException {
+    System.out.println("Performing overlay:");
+    System.out.println("...reading finalization: " + FINALIZATION_PREFIX + Id + Bitmap.BMP_SUFFIX);
+    Matrix finalization = Bitmap.read(FINALIZATION_PREFIX + Id + Bitmap.BMP_SUFFIX);
+    for (int idx=0; idx<printerNum; idx++) {
+      System.out.println("...reading share from: " + Printer.SHARE_PREFIX + Id + "-" + idx + Bitmap.BMP_SUFFIX);
+      Matrix share = Bitmap.read(Printer.SHARE_PREFIX + Id + "-" + idx + Bitmap.BMP_SUFFIX);
+      finalization.or(share, Matrix.OVERWRITE);
+    }
+    System.out.println("..overlay written to: " + OVERLAY_PREFIX + Id + Bitmap.BMP_SUFFIX);
+    finalization.write(OVERLAY_PREFIX + Id + Bitmap.BMP_SUFFIX);
   }
 }

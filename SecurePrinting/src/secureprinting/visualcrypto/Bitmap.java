@@ -14,6 +14,8 @@ public final class Bitmap {
 
   public static final int WHITE_PXL = (255<<24)|(255<<16)|(255<<8)|255;
   public static final int BLACK_PXL = 255<<24;
+  public static final String BMP_SUFFIX = ".bmp";
+  public static final String BMP_TYPE = "bmp";
   
   public Bitmap(Matrix matrix) {
     height = matrix.rowSize;
@@ -30,7 +32,7 @@ public final class Bitmap {
   public void write(String filename) throws IOException {
     BufferedImage bf = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY); 
     bf.setRGB(0, 0, width, height, rgbArray, 0, width);
-    ImageIO.write(bf, "bmp", new File(filename));
+    ImageIO.write(bf, BMP_TYPE, new File(filename));
   }
 
   public static Matrix read(String filename) throws IOException {

@@ -110,7 +110,7 @@ public class Matrix {
   public void write(String filename) {
     try {
       Bitmap bmp = new Bitmap(this.toRGBArray(), colSize, rowSize);
-      bmp.write(filename + ".bmp");
+      bmp.write(filename + Bitmap.BMP_SUFFIX);
     } catch (IOException ex) {
       ex.printStackTrace();
     }

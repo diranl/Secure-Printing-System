@@ -13,16 +13,18 @@ final class Printer {
   private final Matrix share;
   public final CipherMessage cipher;
   public final Commitment commitToShare;
-  public final String ID;
+  public final String Id;
 
-  protected Printer(CipherMessage cipher, ElGamalPublicKey pubKey, String ID) throws NoSuchAlgorithmException, NoSuchProviderException {
+  public static final String SHARE_PREFIX = "share-";
+
+  protected Printer(CipherMessage cipher, ElGamalPublicKey pubKey, String Id) throws NoSuchAlgorithmException, NoSuchProviderException {
     this.share = Matrix.random(cipher.rowSize, cipher.colSize);
     this.cipher = cipher.xor(this.share, pubKey);
     this.commitToShare = new Commitment(share);
-    this.ID = ID;
+    this.Id = Id;
   }
-  protected Printer(Printer inputPrinter, ElGamalPublicKey pubKey, String ID) throws NoSuchAlgorithmException, NoSuchProviderException {
-    this(inputPrinter.cipher, pubKey, ID);
+  protected Printer(Printer inputPrinter, ElGamalPublicKey pubKey, String Id) throws NoSuchAlgorithmException, NoSuchProviderException {
+    this(inputPrinter.cipher, pubKey, Id);
   }
 
   protected Matrix decommit() {
@@ -31,7 +33,7 @@ final class Printer {
 
   protected void write(BasisMatrix basis, int idx) {
     Matrix augmented = share.augment(basis, idx);
-    String filename = "share-" + ID + "-" + idx;
+    String filename = SHARE_PREFIX + Id + "-" + idx;
     augmented.write(filename);
     System.out.println("..share created to: " + filename + ".bmp");
   }
