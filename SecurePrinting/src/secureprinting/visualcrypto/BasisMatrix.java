@@ -86,13 +86,13 @@ public class BasisMatrix extends Matrix {
     if (_rowSize == _colSize) {
       // Perfect square 
       matrix = new Matrix(_rowSize, _colSize);
-      for (int idx=0, length=_rowSize*_colSize; idx<length; idx++) {
+      for (int idx=0, length=super.colSize; idx<length; idx++) {
         if (row.get(idx)) matrix.set(idx);
       }
     } else {
       // Needs squaring through doubling
       matrix = new Matrix(_rowSize*2, _colSize);
-      for (int idx=0, length=_rowSize*_colSize; idx<length*2; idx++) {
+      for (int idx=0, length=super.colSize; idx<length*2; idx++) {
         if (row.get(idx % length)) matrix.set(idx);
       }
     }
@@ -104,17 +104,13 @@ public class BasisMatrix extends Matrix {
     int _rowSize = dim[0], _colSize = dim[1];
     Matrix matrix = new Matrix(_rowSize, _colSize);
 
-    int rowIdx=0, colIdx=0, length=_rowSize*_colSize;
     /* Transcribe the array elements into matrix */
-    for (int idx=0; idx<row.size()/*FIXME: row.size() might not be accurate*/; idx++, colIdx++) {
-      if (colIdx == _colSize) { colIdx = 0; rowIdx++; }
-      matrix.set(rowIdx, colIdx, row.get(idx) ? 1 : 0);
+    for (int idx=0; idx<super.colSize; idx++) {
+      if (row.get(idx)) matrix.set(idx);
     }
     /* Insert padding if necessary */
-    for (int idx=row.size()/*FIXME: row.size() might not be accurate*/; idx<_rowSize*_colSize; idx++, colIdx++) {
-      if (colIdx == _colSize) { colIdx = 0; rowIdx++; }
-      matrix.set(rowIdx, colIdx, 1);
-    }
+    for (int idx=super.colSize; idx<_rowSize*_colSize; idx++) { matrix.set(idx); }
+
     return matrix;
   }
 
@@ -132,6 +128,7 @@ public class BasisMatrix extends Matrix {
 
   public int[] pxlDim() {
     int _rowSize = 1, _colSize = super.colSize;
+
     if (this.method.equals(RECTANGLE_COMPLETE)) {
       for (; _rowSize*2 <= _colSize/2; _rowSize*=2, _colSize/=2) {}
       if (_rowSize != _colSize) _rowSize *= 2;
@@ -140,6 +137,7 @@ public class BasisMatrix extends Matrix {
       if (sideLen*sideLen < super.colSize) sideLen += 1;
       _rowSize = _colSize = sideLen;
     }
+
     int[] dim = {_rowSize, _colSize};
     return dim;
   }
