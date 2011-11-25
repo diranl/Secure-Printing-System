@@ -30,9 +30,6 @@ final class Printer {
   }
 
   protected void write(BasisMatrix basis, int idx) {
-    System.out.println("basis:");
-    basis.print();
-
     Matrix augmented = share.augment(basis, idx);
     String filename = "share-" + ID + "-" + idx;
     augmented.write(filename);

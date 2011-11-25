@@ -48,6 +48,8 @@ public class TranslationTable implements Serializable {
   protected List<Message> msgLst; // list of Message objects. NB: lists are unsynchronized, used vector if synchronization needed
   protected final int size;
 
+  public static final int DEFAULT_PET_NUM = 3;
+
   public TranslationTable(TranslationTable copy) {
     this.size = copy.size;
     this.share = copy.share;
@@ -114,10 +116,28 @@ public class TranslationTable implements Serializable {
     return msg.bigIntValue().intValue();
   }
 
-  public CipherMessage extract(ElGamalCiphertext cipher) throws CryptoException {
+  public CipherMessage extract(ElGamalCiphertext cipher, int petNum) throws CryptoException {
+    System.out.println("Performing PET with: " + petNum + " parties");
     CryptoFactoryC factory = CryptoFactoryC.singleton();
     ElGamalParametersC params = (ElGamalParametersC)share.params;
-    CipherMessage msg = null;
+
+    CipherMessage ret = null;
+    for (Message msg : msgLst) {
+      CipherMessage cipherMsg = (CipherMessage)msg;
+      PETShare[] petShares = new PETShare[petNum];
+      PETDecommitment[] petDecoms = new PETDecommitment[petNum];
+      for (int i=0; i<petNum; i++) {
+        petShares[i] = factory.constructPETShare(params, cipherMsg.key, cipher);
+        petDecoms[i] = petShares[i].decommitment(params);
+      }
+      ElGamalCiphertext petResult = factory.combinePETShareDecommitments(petDecoms, params);
+
+      if (factory.petResult(factory.elGamalDecrypt(share.privKey, petResult))) {
+        ret = cipherMsg;
+        break;
+      }
+    }
+    /*
     for (int idx=0; idx<size; idx++) {
       // TODO: incorporate rigour by making each party interact and commit
       msg = (CipherMessage)msgLst.get(idx);
@@ -126,11 +146,16 @@ public class TranslationTable implements Serializable {
       petShares[0] = factory.constructPETShare(params, msg.key, cipher);
       petDecoms[0] = petShares[0].decommitment(params);
       ElGamalCiphertext petResult = factory.combinePETShareDecommitments(petDecoms, params);
-      // TODO: perform distributed decryption 
+      // TODO: distributed decryption 
       if (factory.petResult(factory.elGamalDecrypt(share.privKey, petResult))) break;
     }
-    return msg;
+    */
+    return ret;
   }
+  public CipherMessage extract(ElGamalCiphertext cipher) throws CryptoException {
+    return this.extract(cipher, DEFAULT_PET_NUM);
+  }
+  
   
   public boolean equals(TranslationTable input) {
     if (this.size != input.size)           return false;
