@@ -7,19 +7,19 @@
 package civitas.crypto;
 
 public class ElGamalKeyPairImpl implements ElGamalKeyPair {
-	final ElGamalPublicKey K;
-	final ElGamalPrivateKey k;
-	
-	public ElGamalKeyPairImpl(ElGamalPublicKey K, ElGamalPrivateKey k) {
-		this.K = K;
-		this.k = k;
-	}
-		
-	public ElGamalPublicKey publicKey() {
-		return K;
-	}
-	
-	public ElGamalPrivateKey privateKey() {
-		return k;
-	}
+  final ElGamalPublicKey K;
+  final ElGamalPrivateKey k;
+
+  public ElGamalKeyPairImpl(ElGamalPublicKey K, ElGamalPrivateKey k) {
+    this.K = K;
+    this.k = k;
+  }
+
+  public ElGamalPublicKey publicKey() {
+    return K;
+  }
+
+  public ElGamalPrivateKey privateKey() {
+    return k;
+  }
 }

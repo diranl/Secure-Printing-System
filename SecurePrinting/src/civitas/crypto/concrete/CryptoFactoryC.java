@@ -13,20 +13,13 @@ import java.util.*;
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
 
-/*TODO: trimmed for jif
-  import jif.lang.Label;
-  import jif.lang.LabelUtil;
- */
-
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
-// import civitas.common.Util;
 import civitas.crypto.*;
 import civitas.crypto.KeyPair;
 import civitas.crypto.MessageDigest;
 import civitas.crypto.PrivateKey;
 import civitas.crypto.PublicKey;
-// import civitas.crypto.Signature;
 import civitas.crypto.common.Base64;
 import civitas.util.CivitasBigInteger;
 
@@ -246,24 +239,6 @@ public class CryptoFactoryC implements CryptoFactory {
     return new PKCS8EncodedKeySpec(bs);
   }
 
-  /*TODO: trimmed for jif
-    public int[] createPermutation(Label lbl, int size) {
-    List<Integer> l = new LinkedList<Integer>();
-    for (int i = 0; i < size; i++) {            
-    l.add(Integer.valueOf(i));
-    }
-
-// now select and remove elements at random from the list.
-int[] perm = new int[size];        
-for (int i = 0; i < size; i++) {
-int j = randomInt(l.size());
-perm[i] = l.remove(j).intValue();
-}
-
-return perm;
-    }
-   */
-
   /** Generate a Schnorr prime group */
   public ElGamalParameters generateElGamalParameters(int keyLength, int groupLength) {
     return new ElGamalParametersC(keyLength, groupLength);
@@ -322,93 +297,6 @@ return perm;
       throw new CryptoError(imposs);
     }
   }
-/* TODO: trim
-   public VoteCapabilityShare generateVoteCapabilityShare(ElGamalParameters p) {
-   ElGamalParametersC ps = (ElGamalParametersC) p;
-   CivitasBigInteger x = CryptoAlgs.randomElement(ps.q);
-   try {
-   return new VoteCapabilityShareC(x, ps);
-   }
-   catch (CryptoException imposs) {
-   throw new CryptoError(imposs);
-   }
-   }
- */
-/*TODO: trim
-  public VoteCapability[] combineVoteCapabilityShares(Label lbl, VoteCapabilityShare[][] shares, ElGamalParameters p) {
-  if (shares == null) return null;
-  try {
-  ElGamalParametersC params = (ElGamalParametersC)p;
-// multiply all the shares together
-CivitasBigInteger[] accum = new CivitasBigInteger[shares[0].length];
-for (int i = 0; i < shares.length; i++) {
-for (int j = 0; j < shares[i].length; j++) {
-VoteCapabilityShareC s = (VoteCapabilityShareC)shares[i][j];
-if (accum[j] == null) {
-accum[j] = s.m;
-}
-else {
-accum[j] = accum[j].modMultiply(s.m, params.p);
-}
-}
-}
-VoteCapability[] ret = new VoteCapability[accum.length];
-for (int j = 0; j < accum.length; j++) {
-ret[j] = new VoteCapabilityC(accum[j]);
-}
-return ret;
-
-  }
-  catch (NullPointerException e) {
-  return null;   
-  }
-  catch (ArrayIndexOutOfBoundsException e) {
-  return null;   
-  }        
-  catch (ClassCastException e) {
-  return null;   
-  }        
-  }
- */
-/*TODO: trim
-  public ElGamalCiphertext[] multiplyCiphertexts(Label lbl, ElGamalSignedCiphertext[][] ciphertexts, ElGamalParameters p) {
-  if (ciphertexts == null) return null;
-  try {
-  ElGamalParametersC params = (ElGamalParametersC)p;
-// multiply all the shares together
-CivitasBigInteger[] aAccum = new CivitasBigInteger[ciphertexts[0].length];
-CivitasBigInteger[] bAccum = new CivitasBigInteger[ciphertexts[0].length];
-for (int i = 0; i < ciphertexts.length; i++) {
-for (int j = 0; j < ciphertexts[i].length; j++) {
-ElGamalCiphertextC s = (ElGamalCiphertextC)ciphertexts[i][j];
-if (aAccum[j] == null) {
-aAccum[j] = s.a;
-bAccum[j] = s.b;
-}
-else {
-aAccum[j] = aAccum[j].modMultiply(s.a, params.p);
-bAccum[j] = bAccum[j].modMultiply(s.b, params.p);
-}
-}
-}
-ElGamalCiphertext[] ret = new ElGamalCiphertext[aAccum.length];
-for (int j = 0; j < aAccum.length; j++) {
-ret[j] = new ElGamalCiphertextC(aAccum[j], bAccum[j]);
-}
-return ret;
-
-  }
-  catch (NullPointerException e) {
-  return null;   
-  }
-  catch (ArrayIndexOutOfBoundsException e) {
-  return null;   
-  }        
-  catch (ClassCastException e) {
-  return null;   
-  }        
-  }
- */
 
   public ElGamalPublicKey combineKeyShares(ElGamalKeyShare[] shares) throws CryptoException {
     if (shares == null) return null;
@@ -534,25 +422,6 @@ return ret;
   }
 
 
-/*TODO: trim
-  public ElGamal1OfLReencryption elGamal1OfLReencrypt(Label lbl,  
-  ElGamalPublicKey key, ElGamalCiphertext[] ciphertexts, 
-  int L, int choice, ElGamalReencryptFactor factor) {
-  if (ciphertexts == null || choice >= L || L > ciphertexts.length) {
-  return null;
-  }        
-  ElGamalCiphertextC m = (ElGamalCiphertextC)elGamalReencrypt(key, ciphertexts[choice], factor);
-  ElGamalProof1OfLC proof = constructElGamalProof1OfL((ElGamalPublicKeyC)key, ciphertexts, L, choice, m, (ElGamalReencryptFactorC)factor);
-  return new ElGamal1OfLReencryptionC(m, proof);
-  }
- */
-
-/*
-   private ElGamalProof1OfLC constructElGamalProof1OfL(ElGamalPublicKeyC key, ElGamalCiphertext[] ciphertexts, int L, int choice, ElGamalCiphertextC m, ElGamalReencryptFactorC factor) {
-   return ElGamalProof1OfLC.constructProof(key, ciphertexts, L, choice, m, factor);
-   }
- */
-
   /**
    * @return The decoding of message m to a plaintext.
    * @throws CryptoException If m does not decode to a plaintext i such that 1 <= i <= L.
@@ -564,35 +433,6 @@ return ret;
     // (1, 2, 3, ...), and we want to return the index of the value.
     return paramsc.bruteForceDecode(mc.bigIntValue(),L) - 1;
   }
-/**
- * Construct a well known ciphertext list. Needs to be coordinated with elGamal1OfLValue(ElGamalMsg)
- * such that elGamal1OfLValue(m) = j where ret[j] = enc(m)
- */
-/*TODO: trim
-  public ElGamalCiphertext[] constructWellKnownCiphertexts(Label lbl, ElGamalPublicKey key, int count) {
-  if (count < 0 || key == null) return null;
-  ElGamalCiphertext[] cs = new ElGamalCiphertext[count];
-
-// Note: the well known ciphertexts MUST be the encryptions of 1,2,3,...
-// using the encryption factor 0. This is assumed by some of the
-// zero knowledge proofs.
-ElGamalReencryptFactor factor = new ElGamalReencryptFactorC(CivitasBigInteger.ZERO); 
-try {
-ElGamalParametersC params = (ElGamalParametersC)key.getParams();
-for (int i = 0; i < count; i++) {
-// encrypt (i+1);
-try {
-cs[i] = elGamalEncrypt(key, new ElGamalMsgC(i+1,params), factor);
-} 
-catch (CryptoException imposs) {
-throw new CryptoError(imposs);
-}
-}
-}
-catch (ClassCastException e) { return null; }
-return cs;
-  }
- */
 
 
   /**
@@ -794,68 +634,6 @@ return cs;
     }
   }
 
-/*TODO: trim
-  public ElGamalCiphertext elGamalCiphertextFromXML(Label lbl, Reader r) throws IllegalArgumentException, IOException {
-  if (Util.isNextTag(lbl, r, ElGamalCiphertext.OPENING_TAG)) {
-  return ElGamalCiphertextC.fromXML(lbl, r);
-  }
-  else {
-  return elGamalSignedCiphertextFromXML(lbl, r);            
-  }
-  }
-
-
-  public ElGamalParameters elGamalParametersFromXML(Label lbl, Reader r) throws IllegalArgumentException, IOException {
-  return ElGamalParametersC.fromXML(lbl, r);
-  }
-
-  public ElGamalPrivateKey elGamalPrivateKeyFromXML(Label lbl, Reader r) throws IllegalArgumentException, IOException {
-  return ElGamalPrivateKeyC.fromXML(lbl, r);
-  }
-
-  public ElGamalProofKnowDiscLog elGamalProofKnowDiscLogFromXML(Label lbl, Reader r) throws IllegalArgumentException, IOException {
-  return ElGamalProofKnowDiscLogC.fromXML(lbl, r);
-  }
-
-  public ElGamalPublicKey elGamalPublicKeyFromXML(Label lbl, Reader r) throws IllegalArgumentException, IOException {
-  return ElGamalPublicKeyC.fromXML(lbl, r);
-  }
-
-  public ElGamalSignedCiphertext elGamalSignedCiphertextFromXML(Label lbl, Reader r) throws IllegalArgumentException, IOException {
-  return ElGamalSignedCiphertextC.fromXMLsub(lbl, r);
-  }
-
-  public PETCommitment petCommitmentFromXML(Label lbl, Reader r) throws IllegalArgumentException, IOException {
-  return PETCommitmentC.fromXML(lbl, r);
-  }
-
-  public PETDecommitment petDecommitmentFromXML(Label lbl, Reader r) throws IllegalArgumentException, IOException {
-  return PETDecommitmentC.fromXML(lbl, r);
-  }    
-
-  public ElGamalProofDiscLogEquality elGamalProofDiscLogEqualityFromXML(Label lbl, Reader r) throws IllegalArgumentException, IOException {
-  return ElGamalProofDiscLogEqualityC.fromXML(lbl, r);
-  }
-
-  public VoteCapability voteCapabilityFromXML(Label lbl, Reader r) throws IllegalArgumentException, IOException {
-  return VoteCapabilityC.fromXML(lbl, r);
-  }
-
-  public VoteCapabilityShare voteCapabilityShareFromXML(Label lbl, Reader r) throws IllegalArgumentException, IOException {
-  return VoteCapabilityShareC.fromXML(lbl, r);
-  }
-
-  public ElGamal1OfLReencryption elGamal1OfLReencryptionFromXML(Label lbl, Reader r) throws IllegalArgumentException, IOException {
-  return ElGamal1OfLReencryptionC.fromXML(lbl, r);
-  }
-  public ElGamalProof1OfL elGamalProof1OfLFromXML(Label lbl, Reader r) throws IllegalArgumentException, IOException {
-  return ElGamalProof1OfLC.fromXML(lbl, r);
-  }
-  public PETShare petShareFromXML(Label lbl, Reader r) throws IllegalArgumentException, IOException {
-  return PETShareC.fromXML(lbl, r);
-  }
- */
-
   public ElGamalMsg combineDecryptionShares(ElGamalCiphertext c, ElGamalDecryptionShare[] shares, ElGamalParameters params) throws CryptoException { 
     CivitasBigInteger prod = CivitasBigInteger.ONE;       
     try {
@@ -917,159 +695,6 @@ return cs;
         }
     return null;
   }
-
-/*
-   public ElGamalDecryptionShare decryptionShareFromXML(Label lbl, Reader r) throws IllegalArgumentException, IOException {
-   return ElGamalDecryptionShareC.fromXML(lbl, r);
-   }
-   public ElGamalReencryptFactor elGamalReencryptFactorFromXML(Label lbl, Reader r) throws IllegalArgumentException, IOException {
-   return ElGamalReencryptFactorC.fromXML(lbl, r);
-   }
-   public PublicKeyCiphertext publicKeyCiphertextFromXML(Label lbl, Reader r) throws IllegalArgumentException, IOException {
-   return PublicKeyCiphertextC.fromXML(lbl, r);
-   }
-
-   public SharedKeyCiphertext sharedKeyCiphertextFromXML(Label lbl, Reader r) throws IllegalArgumentException, IOException {
-   return SharedKeyCiphertextC.fromXML(lbl, r);
-   }
-
-   public SharedKey sharedKeyFromXML(Label lbl, Reader r) throws IllegalArgumentException, IOException {
-   return SharedKeyC.fromXML(lbl, r);
-   }
-
-   public SharedKey sharedKeyFromWire(Label lbl, Reader r) throws IllegalArgumentException, IOException {
-   if (r instanceof BufferedReader) {
-   return SharedKeyC.fromWire(lbl, (BufferedReader)r);
-   }
-   else {
-   return SharedKeyC.fromWire(lbl, new BufferedReader(r));            
-   }
-   }
-
-   public ElGamalProofDVR elGamalProofDVRFromXML(Label lbl, Reader r) throws IllegalArgumentException, IOException {
-   return ElGamalProofDVRC.fromXML(lbl, r);
-   }
-
-   public ElGamalPrivateKey egPrivKeyFromFile(String keyFile) throws IllegalArgumentException, FileNotFoundException, IOException {
-   Label lbl = LabelUtil.singleton().noComponents();
-   return elGamalPrivateKeyFromXML(lbl, new BufferedReader(new FileReader(keyFile)));
-   }
-
-   public ElGamalPublicKey egPubKeyFromFile(String keyFile) throws IllegalArgumentException, FileNotFoundException, IOException {
-   Label lbl = LabelUtil.singleton().noComponents();
-   return elGamalPublicKeyFromXML(lbl, new BufferedReader(new FileReader(keyFile)));
-   }
-
-   public PrivateKey privateKeyFromFile(String keyFile) throws IllegalArgumentException, FileNotFoundException, IOException {
-   Label lbl = LabelUtil.singleton().noComponents();
-   return PrivateKeyC.fromXML(lbl, new BufferedReader(new FileReader(keyFile)));
-   }
-
-   public PublicKey publicKeyFromFile(String keyFile) throws IllegalArgumentException, FileNotFoundException, IOException {
-   Label lbl = LabelUtil.singleton().noComponents();
-   return publicKeyFromXML(lbl, new BufferedReader(new FileReader(keyFile)));
-   }
-
-   public ElGamalKeyShare elGamalKeyShareFromXML(Label lbl, Reader r) throws IllegalArgumentException, IOException { 
-   return ElGamalKeyShareC.fromXML(lbl, r);
-   }
-
-   public Signature signature(PrivateKey k, PublicKeyMsg msg) {
-   try {
-   PublicKeyMsgC mc = (PublicKeyMsgC)msg;
-   Label lbl = LabelUtil.singleton().noComponents();
-   byte[] bytes = messageDigest(lbl, mc.m.getBytes());
-   return signature(k, lbl, bytes);
-   }
-   catch (RuntimeException e) {
-   throw new CryptoError("Cannot sign", e);           
-   } 
-   }
-   public Signature signature(PrivateKey k, Label lbl, byte[] bytes) {
-   try {
-   numPublicKeySign++;
-   java.security.Signature sig = java.security.Signature.getInstance(PUBLIC_KEY_SIGNATURE_ALG, PUBLIC_KEY_PROVIDER);
-PrivateKeyC kc = (PrivateKeyC)k;
-sig.initSign(kc.k);
-sig.update(bytes); 
-return new SignatureC(sig.sign());
-   }
-catch (InvalidKeyException e) {
-  throw new CryptoError(e);
-}
-catch (SignatureException e) {
-  throw new CryptoError(e);
-}
-catch (NoSuchAlgorithmException e) {
-  throw new CryptoError(e);
-}
-catch (NoSuchProviderException e) {
-  throw new CryptoError(e);
-}
-catch (RuntimeException e) {
-  throw new CryptoError("Cannot sign", e);           
-}         
-   }
-*/
-
-/*TODO: trim
-  public boolean publicKeyVerifySignature(PublicKey K, Signature s, PublicKeyMsg msg) {
-  try {
-  PublicKeyMsgC mc = (PublicKeyMsgC)msg;
-  Label lbl = LabelUtil.singleton().noComponents();
-  byte[] bytes = messageDigest(lbl, mc.m.getBytes());
-  return publicKeyVerifySignature(K, s, bytes);
-  }
-  catch (RuntimeException e) {
-  throw new CryptoError("Cannot verify signature", e);           
-  } 
-  }
-  public boolean publicKeyVerifySignature(PublicKey K, Signature s, Label lbl, byte[] bytes) {
-  return publicKeyVerifySignature(K, s, bytes);
-  }
-  public boolean publicKeyVerifySignature(PublicKey K, Signature s, byte[] bytes) {
-  try {
-  numPublicKeyVerifySig++;
-  java.security.Signature sig = java.security.Signature.getInstance(PUBLIC_KEY_SIGNATURE_ALG, PUBLIC_KEY_PROVIDER);
-  PublicKeyC Kc = (PublicKeyC)K;
-  SignatureC sc = (SignatureC)s;
-  sig.initVerify(Kc.k);
-  sig.update(bytes);
-  return sig.verify(sc.signature);
-  }
-  catch (InvalidKeyException e) {
-  throw new CryptoError(e);
-  }
-  catch (SignatureException e) {
-  throw new CryptoError(e);
-  }
-  catch (NoSuchAlgorithmException e) {
-  throw new CryptoError(e);
-  }
-  catch (NoSuchProviderException e) {
-  throw new CryptoError(e);
-  }
-  catch (RuntimeException e) {
-  throw new CryptoError("Cannot verify signature", e);           
-  } 
-  }
-  public PublicKeyMsg publicKeyVerifySignatureMsg(PublicKey K, Signature s, PublicKeyMsg msg) {
-  if (publicKeyVerifySignature(K, s, msg)) {
-  return msg;
-  }
-  return null;
-  }
-
-  public Signature signatureFromXML(Label lbl, Reader r) throws IllegalArgumentException, IOException {
-  return SignatureC.fromXML(lbl, r);
-  }
-  public PublicKey publicKeyFromXML(Label lbl, Reader r) throws IllegalArgumentException, IOException {
-  return PublicKeyC.fromXML(lbl, r);
-  }
-  public PrivateKey privateKeyFromXML(Label lbl, Reader r) throws IllegalArgumentException, IOException {
-  return PrivateKeyC.fromXML(lbl, r);
-  }
- */
 
   public ElGamalKeyShare constructKeyShare(ElGamalKeyPairShare kps) {
     ElGamalKeyShare egks =  elGamalKeyShare(kps.pubKey, 
@@ -1145,79 +770,6 @@ catch (RuntimeException e) {
     if (n <= 0) return 0;
     return CryptoAlgs.rng().nextInt(n);
   }
-
-
-/*
-   public ElGamalProofDVR constructElGamalProofDVR(ElGamalPublicKey k, ElGamalPublicKey verifierKey, 
-   ElGamalCiphertext e, ElGamalCiphertext ePrime, 
-   ElGamalReencryptFactor er, ElGamalReencryptFactor erPrime) {
-   try {
-   ElGamalParametersC ps = (ElGamalParametersC)k.getParams();
-   CivitasBigInteger zeta = ((ElGamalReencryptFactorC)erPrime).r.modSubtract(((ElGamalReencryptFactorC)er).r, ps.q); 
-   return ElGamalProofDVRC.constructProof((ElGamalCiphertextC)e, 
-   (ElGamalCiphertextC)ePrime, 
-   (ElGamalPublicKeyC)k, 
-   (ElGamalPublicKeyC)verifierKey, zeta);
-   }
-   catch (ClassCastException ex) {
-   return null;
-   }
-   }
-
-
-   public ElGamalProofDVR constructFakeElGamalProofDVR(ElGamalPublicKey k, ElGamalPublicKey verifierKey, ElGamalPrivateKey verifierPrivKey, ElGamalCiphertext e, ElGamalCiphertext ePrime) {
-   try {
-   return ElGamalProofDVRC.fakeProof((ElGamalCiphertextC)e, (ElGamalCiphertextC)ePrime, 
-   (ElGamalPublicKeyC)k, (ElGamalPublicKeyC)verifierKey, 
-   (ElGamalPrivateKeyC)verifierPrivKey);
-   }
-   catch (ClassCastException ex) {
-   return null;
-   }
-   }
- *
- */
-
-/*
-   public PublicKeyCiphertext publicKeyEncrypt(PublicKey key, PublicKeyMsg msg) {
-   numPublicKeyEncs++;
-   PublicKeyC keyc = (PublicKeyC)key;
-   PublicKeyMsgC msgc = (PublicKeyMsgC)msg;
-   byte[] encrypted = jseCrypt(PUBLIC_KEY_CIPHER_ALG, PUBLIC_KEY_PROVIDER, keyc.k, Cipher.ENCRYPT_MODE, msgc.toBytes());
-   return new PublicKeyCiphertextC(encrypted);
-   }
-
-   public PublicKeyMsg publicKeyDecrypt(PrivateKey key, PublicKeyCiphertext ciphertext) throws CryptoException {
-   numPublicKeyDecs++;
-   PrivateKeyC keyc = (PrivateKeyC)key;
-   PublicKeyCiphertextC ciphertextc = (PublicKeyCiphertextC)ciphertext;
-   byte[] plaintext = jseCrypt(PUBLIC_KEY_CIPHER_ALG, PUBLIC_KEY_PROVIDER, keyc.k, Cipher.DECRYPT_MODE, ciphertextc.toBytes());
-   return new PublicKeyMsgC(plaintext);
-   }
-
-   public SharedKey generateSharedKey(int keyLength) {
-   SecretKey k = sharedKeyGenerator(keyLength).generateKey();
-   return new SharedKeyC(k, "sharedKey-civitas"); 
-   }
-
-
-   public SharedKeyCiphertext sharedKeyEncrypt(SharedKey key, SharedKeyMsg msg) {
-   numSharedKeyEncs++;
-   SharedKeyC keyc = (SharedKeyC)key;
-   SharedKeyMsgC msgc = (SharedKeyMsgC)msg;
-   byte[] encrypted = jseCrypt(SHARED_KEY_CIPHER_ALG, SHARED_KEY_PROVIDER, keyc.k, Cipher.ENCRYPT_MODE, msgc.toBytes());
-   return new SharedKeyCiphertextC(encrypted);
-   }
-
-   public SharedKeyMsg sharedKeyDecrypt(SharedKey key, SharedKeyCiphertext ciphertext) throws CryptoException {
-   numSharedKeyDecs++;
-   SharedKeyC keyc = (SharedKeyC)key;
-   SharedKeyCiphertextC ciphertextc = (SharedKeyCiphertextC)ciphertext;
-   byte[] plaintext = jseCrypt(SHARED_KEY_CIPHER_ALG, SHARED_KEY_PROVIDER, keyc.k, Cipher.DECRYPT_MODE, ciphertextc.toBytes());
-   return new SharedKeyMsgC(plaintext);
-   }
- *
- */
 
   private byte[] jseCrypt(String alg, String provider, Key skey, int mode, byte[] input) {
 
@@ -1316,22 +868,6 @@ catch (RuntimeException e) {
   public String bytesToBase64(byte[] a) {
     return Base64.encodeBytes(a);
   }
-  /*TODO:trim
-    public String constBytesToBase64(Label lbl, byte[] a) {
-    return Base64.encodeBytes(a);
-    }
-   */
-
-  /*
-     public PublicKeyMsg publicKeyMsg(String m) throws CryptoException {
-     return new PublicKeyMsgC(m);
-     }
-
-     public SharedKeyMsg sharedKeyMsg(String m) throws CryptoException {
-     return new SharedKeyMsgC(m);
-     }
-   * 
-   */
 
   public static String bigIntToString(CivitasBigInteger i) {
     return Base64.encodeBytes(i.toByteArray());
@@ -1339,34 +875,6 @@ catch (RuntimeException e) {
   public static CivitasBigInteger stringToBigInt(String s) {
     return new CivitasBigInteger(Base64.decode(s));
   }
-
-/*
-   public ProofVote constructProofVote(ElGamalParameters params, ElGamalCiphertext encCapability, 
-   ElGamal1OfLReencryption encChoice, String context, 
-   ElGamalReencryptFactor encCapabilityFactor, ElGamalReencryptFactor encChoiceFactor) 
-   {
-   try {
-   return new ProofVoteC((ElGamalParametersC)params, 
-   (ElGamalCiphertextC)encCapability, 
-   ((ElGamal1OfLReencryptionC)encChoice).m, 
-   context,
-   (ElGamalReencryptFactorC)encCapabilityFactor, 
-   (ElGamalReencryptFactorC)encChoiceFactor);
-   }
-   catch (ClassCastException e) {
-   throw new CryptoError(e);
-   }
-   }
- * 
- */
-
-/*TODO:trim
-  public ProofVote proofVoteFromXML(Label lbl, Reader r) 
-  throws IllegalArgumentException, IOException 
-{
-return ProofVoteC.fromXML(lbl, r);
-}
- */
 
   public static long numPublicKeyEncs() { return numPublicKeyEncs; }
   public static long numPublicKeyDecs() { return numPublicKeyDecs; }
