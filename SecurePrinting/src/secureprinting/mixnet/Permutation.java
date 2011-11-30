@@ -19,6 +19,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Permutation class creates and stores permutation sequences
+ */
 public class Permutation implements Serializable {
 
   private final List<Integer> swapped;
@@ -45,10 +48,12 @@ public class Permutation implements Serializable {
     this.srnd = null;
   }
 
-  // Generate a map f: {0,1,...} -> {...}
-  // which dictates the mapping of elements of an ordered list based on the given permutation
-  // For e.g.: permutation={3,2,1,4,0}
-  // f({0,1,2,3,4}) = {4,2,1,0,3}, that is, 0->4, 1->2, 2->1, 3->0, 4->3
+  /**
+   * toMap: Generate a map f: {0,1,...} -> {...}
+   * which dictates the mapping of elements of an ordered list based on the given permutation
+   * For e.g.: permutation={3,2,1,4,0}
+   * f({0,1,2,3,4}) = {4,2,1,0,3}, that is, 0->4, 1->2, 2->1, 3->0, 4->3
+  */
   public static List<Integer> toMap(List<Integer> swapped) {
     List<Integer> map = new ArrayList<Integer>(swapped.size());
     for (int idx=0; idx<swapped.size(); idx++) map.add(findPositionOf(idx, swapped));
@@ -63,13 +68,14 @@ public class Permutation implements Serializable {
     return pos;
   }
   
-  protected Permutation invert(Permutation shadowPrm) {
+  /**
+   * invert: Computes the inverse permutation s.t. permute(inv, permute(rnd, lst)) == permute(this, lst)
+   */
+  protected Permutation invert(Permutation rndPrm) {
     //TODO: sanity check for size equality
-    //For an original permutation prm_o and shadow permutation prm_s
-    // find prm_inv s.t. prm_inv(prm_s(lst)) = prm_o(lst)
     int[] inversePrm = new int[size];
     for (int startPos=0, midPos, endPos; startPos<size; startPos++) {
-      midPos = findPositionOf(startPos, shadowPrm.swapped);
+      midPos = findPositionOf(startPos, rndPrm.swapped);
       endPos = findPositionOf(startPos, this.swapped);
       inversePrm[midPos] = endPos;
     }
@@ -90,6 +96,10 @@ public class Permutation implements Serializable {
     return srnd;
   }
 
+  /**
+   * range: generate the ordered list {0,1,...,length-1}
+   * <Note>See range(num) in Python</Note>
+   */
   public static List<Integer> range(int length) {
     List<Integer> range = new ArrayList<Integer>(length);
     for (int i=0;i<length;i++) { range.add(i); }

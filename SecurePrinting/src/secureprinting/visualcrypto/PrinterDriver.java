@@ -15,6 +15,9 @@ import java.util.Random;
 import secureprinting.Controller;
 import secureprinting.Commitment;
 
+/**
+ * PrinterDriver class instantiates and coordinates Printer instances
+ */
 final class PrinterDriver {
   public final int printerNum;
   public final CipherMessage initialCipher;
@@ -41,6 +44,9 @@ final class PrinterDriver {
     this(DEFAULT_PRINTER_NUM, cipher, pubKey);
   }
   
+  /**
+   * execute: Instantiate Printer's which print and commit to their shares
+   */
   public void execute() throws NoSuchAlgorithmException, NoSuchProviderException {
     printerLst = new ArrayList<Printer>(printerNum);
     Printer newPrinter = null;
@@ -54,6 +60,9 @@ final class PrinterDriver {
     this.finalizedMsg = newPrinter.cipher;
   }
 
+  /**
+   * reveal: Decommit each Printer's share, check against commitment
+   */
   public void reveal() {
     System.out.println("..revealing: " + Id);
     for (Printer printer : printerLst) {
@@ -64,6 +73,9 @@ final class PrinterDriver {
     this.revealed = true;
   }
 
+  /**
+   * writeFinalization: Decrypts finalization layer and prints the plaintext
+   */
   public void writeFinalization(ElGamalPrivateKey privKey) {
     if (revealed) throw new RuntimeException("Cannot finalize a Printer which has been revealed");
     System.out.println("...decrypting finalization layer");
@@ -74,6 +86,10 @@ final class PrinterDriver {
     System.out.println("..finalization layer written to: " + filename + Bitmap.BMP_SUFFIX);
   }
 
+  /**
+   * writeOverlay: Aggregates all commited shares plus the finalization layer into one image file
+   * <Note>NOT present in the actual scheme, used for debugging pursposes only</Note>
+   */
   public void writeOverlay() throws IOException {
     System.out.println("Performing overlay:");
     System.out.println("...reading finalization: " + FINALIZATION_PREFIX + Id + Bitmap.BMP_SUFFIX);

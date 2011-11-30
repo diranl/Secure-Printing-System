@@ -8,12 +8,6 @@ public final class Commitment {
   public final String value;
   private static final CryptoFactoryC factory = CryptoFactoryC.singleton();
 
-  /**
-   * Commits to a FactorTable and a Permutation
-   * <p>NOTE: the commitment convention used is hash(permutation||random factors)</p>
-   * @param type either RANDOM or INVERSION 
-   * @return hash of commited values
-   */
   public Commitment(FactorTable factorTbl, Permutation prm) {
     this.value = factory.hash(factorTbl.toJson() + prm.toJson());
   }

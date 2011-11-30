@@ -2,6 +2,9 @@ package secureprinting.mixnet;
 
 import java.util.BitSet;
 
+/**
+ * PlaintextMessage class store a given key and its corresponding bit-translation in plaintext
+ */
 public class PlaintextMessage extends Message {
   protected final int key;
   private final BitSet translation;

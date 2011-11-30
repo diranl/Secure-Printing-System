@@ -9,6 +9,9 @@ import secureprinting.Commitment;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 
+/**
+ * Printer class creates a random share, xor it with a given cipher, commits his share
+ */
 final class Printer {
   private final Matrix share;
   public final CipherMessage cipher;

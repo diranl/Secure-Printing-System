@@ -2,6 +2,10 @@ package secureprinting.mixnet;
 
 import secureprinting.Commitment;
 
+/**
+ * ChallengeProof class complimentary to Challenge
+ * <Note>All variables are public as needed for proof of knowledge</Note>
+ */
 final class ChallengeProof {
   public final FactorTable factorTbl;
   public final Permutation permutation;
@@ -17,6 +21,9 @@ final class ChallengeProof {
     this.commit = commit;
   }
 
+  /**
+   * verifyProof: Randomize and permute inputTbl, verify result against control Table
+   */
   public static boolean verifyProof(ChallengeProof proof) {
     if (!Commitment.verifyCommit(proof.factorTbl, proof.permutation, proof.commit)) throw new RuntimeException("Invalid decommitment to Challenge");
     System.out.println("...commitment verified");

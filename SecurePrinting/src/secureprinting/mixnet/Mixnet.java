@@ -9,6 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Mixnet class instantiates and coordinates Server classes
+ * <Note>Performs mixing of TranslationTable and verification through Shadow Mix</Note>
+ */
 public final class Mixnet {
   public final int serverNum; 
   public TranslationTable mixedTable;
@@ -20,12 +24,12 @@ public final class Mixnet {
     this.serverNum = serverNum;
   }
 
+  /**
+   * execute: Mixes TranslationTable as described by part 1 of Sub-protocol 1.1
+   */
   public void execute(ElGamalKeyPairShare share) throws FileNotFoundException, NoSuchAlgorithmException, NoSuchProviderException {
-    // Performs the mixing, server by server in a serial fashion, as described by part 1. of Sub-protocol 1.1
-    // Produces the final mixed table
     this.serverLst = new ArrayList<Server>(serverNum);
     TranslationTable initialTbl = TranslationTable.initTable(share);
-    //TODO(crucial!): check that deep copies are performed rather than shallow
     Server newSvr = null;
     for (int idx=0; idx<serverNum; idx++) {
       System.out.println("Processing server: " + idx);
@@ -36,6 +40,10 @@ public final class Mixnet {
     this.mixedTable = newSvr.outputTbl;
   }
 
+  /**
+   * validate: Challenges each server and checks against proof of validation
+   * <Note> As described by Shadow Mix</Note>
+   */
   public void validate() throws NoSuchAlgorithmException, NoSuchProviderException {
     for (Server server : serverLst) {
       System.out.println(".server:");

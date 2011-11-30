@@ -9,6 +9,9 @@ import secureprinting.visualcrypto.Bitmap;
 
 public final class Parser {
 
+  /**
+   * Parses CSV file into a matrix instance
+   */
   public static Matrix parseCsv(String filename) throws FileNotFoundException {
     File file = new File(filename);
     Scanner scanner = new Scanner(new FileReader(file));
@@ -24,7 +27,6 @@ public final class Parser {
     int rowSize = list.size(); 
     return new Matrix(rowSize, colSize, flatten(list, rowSize, colSize));
   }
-
   private static int process(String line, List<BitSet> list) {
     BitSet bitset = new BitSet();
     Scanner scanner = new Scanner(line);
@@ -39,6 +41,9 @@ public final class Parser {
     return idx;
   }
   
+  /**
+   * Converts a list of BitSet into a single BitSet
+   */
   private static BitSet flatten(List<BitSet> matrix, int rowSize, int colSize) {
     BitSet bitSet = new BitSet(rowSize*colSize);
     for (int rowIdx=0; rowIdx<rowSize; rowIdx++) {

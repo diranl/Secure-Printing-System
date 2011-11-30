@@ -33,15 +33,17 @@ import java.util.logging.Logger;
 
 
 /**
- * TranslationTable stores the set of Messages used for mixing and printing. 
+ * TranslationTable class stores the set of Messages used for mixing and printing
+ * aka it stores the alphabet
  *
- * The following is an example to initialize a TranslationTable from the test sources
+ * Performs randomization and permutation.
+ *
+ * <p>The following is an example to initialize a TranslationTable from the test sources
  *   CryptoFactoryC factory = CryptoFactoryC.singleton();
  *   ElGamalParametersC params = (ElGamalParametersC)factory.generateElGamalParameters();
  *   ElGamalKeyPairShare share = factory.generateKeyPairShare(params);
- *   TranslationTable initialTbl = TranslationTable.initTable(share);
+ *   TranslationTable initialTbl = TranslationTable.initTable(share);</p>
  * 
- * @author Diran Li
  */
 public class TranslationTable implements Serializable {
   protected transient final ElGamalKeyPairShare share;
@@ -57,16 +59,15 @@ public class TranslationTable implements Serializable {
     Collections.copy(this.msgLst, copy.msgLst);
   }
 
-  /**
-   * @param msgLst
-   * @param share
-   */
   public TranslationTable(List<Message> msgLst, ElGamalKeyPairShare share) {
     this.msgLst = msgLst;
     this.size = msgLst.size();
     this.share = share;
   }
 
+  /**
+   * permute: Permutes TranslationTable according to given Permutation
+   */
   public void permute(Permutation permutation) {
     // TODO: sanity check for size equality
     List<Integer> swapped = permutation.getList();
@@ -79,6 +80,9 @@ public class TranslationTable implements Serializable {
     }
   }
 
+  /**
+   * randomize: Randomizes TranslationTable according to given FactorTable
+   */
   public void randomize(FactorTable factorTable) {
     CryptoFactoryC factory = CryptoFactoryC.singleton();
     CipherMessage msg;
@@ -91,6 +95,10 @@ public class TranslationTable implements Serializable {
     }
   }
 
+  /**
+   * decryt: Decrypts encrypted table, CipherMessage becomes PlaintextMessage
+   * @return TranslationTable
+   */
   public TranslationTable decrypt() throws CryptoException {
     List<Message> decryptedLst = new ArrayList<Message>(size);
     for (int i=0; i<size; i++) {
@@ -116,6 +124,9 @@ public class TranslationTable implements Serializable {
     return msg.bigIntValue().intValue();
   }
 
+  /**
+   * extract: Perform Plaintext Equality Test to extract desired CipherMessage
+   */
   public CipherMessage extract(ElGamalCiphertext cipher, int petNum) throws CryptoException {
     System.out.println("Performing PET with: " + petNum + " parties");
     CryptoFactoryC factory = CryptoFactoryC.singleton();
@@ -137,19 +148,6 @@ public class TranslationTable implements Serializable {
         break;
       }
     }
-    /*
-    for (int idx=0; idx<size; idx++) {
-      // TODO: incorporate rigour by making each party interact and commit
-      msg = (CipherMessage)msgLst.get(idx);
-      PETShare[] petShares = new PETShare[1];
-      PETDecommitment[] petDecoms = new PETDecommitment[1];
-      petShares[0] = factory.constructPETShare(params, msg.key, cipher);
-      petDecoms[0] = petShares[0].decommitment(params);
-      ElGamalCiphertext petResult = factory.combinePETShareDecommitments(petDecoms, params);
-      // TODO: distributed decryption 
-      if (factory.petResult(factory.elGamalDecrypt(share.privKey, petResult))) break;
-    }
-    */
     return ret;
   }
   public CipherMessage extract(ElGamalCiphertext cipher) throws CryptoException {
@@ -172,7 +170,7 @@ public class TranslationTable implements Serializable {
   }
 
   /**
-   * Serializes the object into a JSON equivalence using the GSON project by Google
+   * toJson: Serializes the object into a JSON equivalence using the GSON project by Google
    */
   public String toJson() {
     Gson gson = new Gson();
@@ -227,6 +225,9 @@ public class TranslationTable implements Serializable {
     return table;
   }
 
+  /**
+   * Prints TranslationTable, message by message
+   */
   public void print() {
     for (Message msg : msgLst) {
       msg.print();
@@ -249,7 +250,9 @@ public class TranslationTable implements Serializable {
     return (new TranslationTable(lst, share));
   }
   
-  @SuppressWarnings("Testing")
+  /**
+   * Tests all features of TranslationTable
+   */
   public static void main(String args[]) throws FileNotFoundException, CryptoException, NoSuchAlgorithmException, NoSuchProviderException {
     CryptoFactoryC factory = CryptoFactoryC.singleton();
     ElGamalParametersC params = (ElGamalParametersC)factory.generateElGamalParameters();

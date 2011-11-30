@@ -15,6 +15,9 @@ import secureprinting.Matrix;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * CipherMessage class stores an encrypted key with its corresponding encrypted bit-translation
+ */
 public class CipherMessage extends Message {
   protected ElGamalCiphertext key;
   protected List<ElGamalCiphertext> translation;
@@ -50,6 +53,9 @@ public class CipherMessage extends Message {
     return translation.equals(cipher.translation);
   }
 
+  /**
+   * xor: Performs the homomorphic xor between existing cipher and input plaintext matrix
+   */
   public CipherMessage xor(Matrix input, ElGamalPublicKey pubKey) {
     //TODO: sanity check for size correspondence
     CryptoFactoryC factory = CryptoFactoryC.singleton();
@@ -60,6 +66,9 @@ public class CipherMessage extends Message {
     return (new CipherMessage(this.key, _translation, this.rowSize, this.colSize));
   }
   
+  /**
+   * fromMatrix: Converts input plaintext matrix into an encrypted translation
+   */
   private List<ElGamalCiphertext> fromMatrix(Matrix translation, ElGamalKeyPairShare share) {
     CryptoFactoryC factory = CryptoFactoryC.singleton();
     List<ElGamalCiphertext> ciphers = new ArrayList<ElGamalCiphertext>(length);
@@ -73,6 +82,9 @@ public class CipherMessage extends Message {
     return ciphers;
   }
 
+  /**
+   * decryptToMatrix: Decrypts the encrypted translation into a plaintext matrix
+   */
   public Matrix decryptToMatrix(ElGamalPrivateKey privKey) {
     Matrix decrypted = new Matrix(rowSize, colSize);
     try {
@@ -96,6 +108,9 @@ public class CipherMessage extends Message {
     System.out.println();
   }
 
+  /**
+   * decryptPrint: Decrypts CipherMessage then prints the plaintext
+   */
   public void decryptPrint(ElGamalPrivateKey privKey) throws CryptoException {
     Matrix decrypted = decryptToMatrix(privKey);
     System.out.println("Message: " + cipherToKey(privKey));

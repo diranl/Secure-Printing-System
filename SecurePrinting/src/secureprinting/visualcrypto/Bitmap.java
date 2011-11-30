@@ -7,6 +7,9 @@ import java.io.File;
 import javax.imageio.ImageIO;
 import secureprinting.Matrix;
 
+/**
+ * Bitmap class reads and writes to .BMP files
+ */
 public final class Bitmap { 
   private final int width;
   private final int height;

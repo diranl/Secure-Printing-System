@@ -4,6 +4,9 @@ import secureprinting.Matrix;
 import java.util.BitSet;
 import java.util.Stack;
 
+/**
+ * BasisMatrix class implements basis needed for Visual Crypto
+ */
 public class BasisMatrix extends Matrix {
   public static final String SQUARE_COMPLETION = "-squarecomplete";
   public static final String NON_SQUARE = "-nonsquare";
@@ -22,6 +25,10 @@ public class BasisMatrix extends Matrix {
     this(n, DEFAULT_METHOD);
   }
 
+  /**
+   * permute: create all 2^(n-1) permutations of a n party visual crypto scheme
+   * <Note>All permutations are inserted as columns into the basis matrix</Note>
+   */
   private void permute() {
     Stack<Integer> stack = new Stack<Integer>();
 
@@ -78,6 +85,15 @@ public class BasisMatrix extends Matrix {
     }
   }
 
+  /**
+   * rectcomplete: 
+   * <p>Permise: given a row in the basis matrix, generate a square matrix corresponding to the completion 
+   * of the given row<p>
+   *
+   * Since all rows are of size 2^(n-1):
+   *  if 2|n-1  => return 2^(n-1/2) by 2^(n-1/2) matrix
+   *  if 2~|n-1 => return 2^(n/2) by 2^(n/2)     matrix by duplicating row values
+   */
   private Matrix rectcomplete(BitSet row) {
     int _rowSize = 1, _colSize = super.colSize;
     for (; _rowSize*2 <= _colSize/2; _rowSize*=2, _colSize/=2) {}
@@ -99,6 +115,14 @@ public class BasisMatrix extends Matrix {
     return matrix;
   }
 
+  /**
+   * squarecomplete:
+   * <p>Permise: given a row in the basis matrix, generate a square matrix corresponding to the completion 
+   * of the given row<p>
+   *
+   * Since all rows are of size 2^(n-1):
+   * return 2^(n-1/2) by 2^(n-1/2) matrix with padding if necessary (paddings are "1-bit"'s)
+   */
   private Matrix squarecomplete(BitSet row) {
     int[] dim = pxlDim();
     int _rowSize = dim[0], _colSize = dim[1];
@@ -114,6 +138,9 @@ public class BasisMatrix extends Matrix {
     return matrix;
   }
 
+  /**
+   * retrieve: extracts a basis row and completes it into a square matrix
+   */
   public Matrix retrieve(int rowIdx, int bit) {
     BitSet row = super.extractRow(rowIdx);
     if (bit == 1) row.flip(0, row.size());
@@ -126,6 +153,9 @@ public class BasisMatrix extends Matrix {
     }
   }
 
+  /**
+   * pxlDim: returns the size of a completed square pixel
+   */
   public int[] pxlDim() {
     int _rowSize = 1, _colSize = super.colSize;
 

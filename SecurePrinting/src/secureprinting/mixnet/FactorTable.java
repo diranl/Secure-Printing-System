@@ -18,6 +18,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * FactorTable class stores the table of random factors complementary to TranslationTable
+ */
 public class FactorTable implements Serializable {
   private final List< List<ElGamalReencryptFactor> > factorTable; 
   protected final int size;
@@ -54,15 +57,18 @@ public class FactorTable implements Serializable {
     factorTable.get(rowIdx).set(colIdx, factor);
   }
 
-  protected FactorTable invert(FactorTable shadowTbl, ElGamalParametersC params) {
-    // For each original factors r_o and shadow factors r_s
-    // compute r_o - r_s (mod p-1), where p-1 is the order of <g>
+  /**
+   * invert: For every elem in the current table, compute its inverse w.r.t. respective elem in randomTbl
+   * <Note>For each original factors r_o and shadow factors r_s
+   * compute r_o - r_s (mod p-1), where p-1 is the order of <g> <Note>
+   */
+  protected FactorTable invert(FactorTable randomTbl, ElGamalParametersC params) {
     List< List<ElGamalReencryptFactor> > _factorTable = new ArrayList< List<ElGamalReencryptFactor> >(size);
     for (int rowIdx=0, colSize=this.extractRow(rowIdx).size(); rowIdx<size; rowIdx++) {
       colSize=this.extractRow(rowIdx).size();
       List<ElGamalReencryptFactor> _row = new ArrayList<ElGamalReencryptFactor>(colSize);
       for (int colIdx=0; colIdx<colSize; colIdx++) {
-        ElGamalReencryptFactor inverse = ((ElGamalReencryptFactorC)this.get(rowIdx, colIdx)).subtract((ElGamalReencryptFactorC)shadowTbl.get(rowIdx, colIdx), params.p);
+        ElGamalReencryptFactor inverse = ((ElGamalReencryptFactorC)this.get(rowIdx, colIdx)).subtract((ElGamalReencryptFactorC)randomTbl.get(rowIdx, colIdx), params.p);
         _row.add(inverse);
       }
       _factorTable.add(_row);

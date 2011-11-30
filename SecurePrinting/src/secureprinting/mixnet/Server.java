@@ -3,18 +3,22 @@ package secureprinting.mixnet;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 
+/**
+ * Server class receives a TranslationTable, mixes it, and provides proof of a valid mix
+ */ 
 final class Server {
   protected final TranslationTable inputTbl;
   protected final TranslationTable outputTbl;
   protected final FactorTable factorTable;
   protected final Permutation permutation;
-  protected Challenge challenge;
+  public Challenge challenge;
 
-  // 1. Generates random factors (for ElGamal reencryption)
-  // 2. Generate permutations
-  // 3. Commit to random factors
-  // 4. Commit to permutations
-  // 5. Perform randomize() and permute() methods for TranslationTable
+  /**
+   * Server class instantiation:
+   * 1. generates random factors - FactorTable instance 
+   * 2. generates permutation - Permutaion instance
+   * 3. randomizes and permutes TranslationTable
+   */
   protected Server(TranslationTable inputTbl) throws NoSuchAlgorithmException, NoSuchProviderException {
     this.inputTbl = inputTbl;
     this.outputTbl = new TranslationTable(inputTbl);
@@ -34,16 +38,13 @@ final class Server {
     permutation.print();
   }
 
-  protected void challenge() {
-    try {
-      //TODO: post commitments to random and inverting mixes
-      System.out.println("...creating challenge");
-      this.challenge = new Challenge(inputTbl, outputTbl, factorTable, permutation);
-    } catch (NoSuchAlgorithmException ex) {
-      ex.printStackTrace();
-    } catch (NoSuchProviderException ex) {
-      ex.printStackTrace();
-    }
+  /**
+   * Creates a Shadow Mix challenge
+   * <Note>The commitments in the challenges have public value</Note>
+   */
+  protected void challenge() throws NoSuchAlgorithmException, NoSuchProviderException {
+    System.out.println("...creating challenge");
+    this.challenge = new Challenge(inputTbl, outputTbl, factorTable, permutation);
   }
 
   protected ChallengeProof reveal(boolean isHead) {

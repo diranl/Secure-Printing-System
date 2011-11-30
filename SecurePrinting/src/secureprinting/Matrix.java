@@ -39,9 +39,17 @@ public class Matrix {
     this.matrix = (BitSet)copy.matrix.clone();
   }
 
+  /**
+   * Retrieve elem at M[rowIdx, colIdx]
+   */
   public boolean get(int rowIdx, int colIdx) {
     return matrix.get(rowIdx*colSize + colIdx);
   }
+
+  /**
+   * Retrieve elem at M[idx]
+   * <Note>this is possible due to the inherent BitSet representation</Note>
+   */
   public boolean get(int idx) {
     return matrix.get(idx);
   }
@@ -63,8 +71,10 @@ public class Matrix {
     matrix.set(idx);
   }
 
+  /**
+   * Printout of matrix row by row 
+   */
   public void print() {
-    // Print out of matrix row by row
     for (int i=0; i<rowSize; i++) {
       for (int j=0; j<colSize; j++) {
         System.out.print((this.get(i, j) ? 1 : 0) + " ");
@@ -73,6 +83,9 @@ public class Matrix {
     }
   }
   
+  /**
+   * Generate random matrix of size  @param rowSize by @param colSize
+   */
   public static Matrix random(int rowSize, int colSize) throws NoSuchAlgorithmException, NoSuchProviderException {
     Random rand = SecureRandom.getInstance("SHA1PRNG", "SUN");
     Matrix matrix = new Matrix(rowSize, colSize);
@@ -84,6 +97,10 @@ public class Matrix {
     return matrix;
   }
 
+  /**
+   * Generate Visual Crypto augmentation 
+   * @param basis contains the squaring method and the number of parties
+   */
   public Matrix augment(BasisMatrix basis, int partyIdx) {
     Matrix _whitePxl = basis.retrieve(partyIdx, 0);
     Matrix _blackPxl = basis.retrieve(partyIdx, 1);
@@ -99,6 +116,9 @@ public class Matrix {
     return augmented;
   }
   
+  /**
+   * Inserts matrix  @param A starting at position [rowStart, colStart]  
+   */
   private void insert(int rowStart, int colStart, Matrix A) {
     for (int rowIdx=0; rowIdx<A.rowSize; rowIdx++) {
       for (int colIdx=0; colIdx<A.colSize; colIdx++) {
@@ -107,6 +127,9 @@ public class Matrix {
     }
   }
 
+  /**
+   * Writes matrix input a bitmap file
+   */
   public void write(String filename) {
     try {
       Bitmap bmp = new Bitmap(this.toRGBArray(), colSize, rowSize);
@@ -116,6 +139,10 @@ public class Matrix {
     }
   }
 
+  /**
+   * Converts matrix input an RGB array format
+   * <Note>RGB array needed for java.awt.image.BufferedImage</Note>
+   */
   public int[] toRGBArray() {
     int[] rgbArray = new int[rowSize*colSize];
     for (int idx=0, rowIdx=0; rowIdx<rowSize; rowIdx++) {
@@ -143,6 +170,9 @@ public class Matrix {
     return operation(TYPE_OR, B, overwrite);
   }
   
+  /**
+   * Helper function for matrix operations
+   */
   private Matrix operation(int type, Matrix B, boolean overwrite) {
     Matrix A = this;
     if (B.rowSize != A.rowSize || B.colSize != A.colSize) throw new RuntimeException("Illegal matrix dimensions.");

@@ -6,6 +6,9 @@ import civitas.crypto.concrete.ElGamalParametersC;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 
+/**
+ * Challenge class used for proof of knowledge in Shadow Mix 
+ */
 final class Challenge {
   private final FactorTable randomTbl;
   private final FactorTable invTbl;
@@ -39,6 +42,9 @@ final class Challenge {
     this.challenged = false;
   }
 
+  /**
+   * reveal: Reveal one of either commitments - random or inversion
+   */
   protected ChallengeProof reveal(boolean isHead) {
     if (challenged) { throw new RuntimeException("ABORT: attempting to reveal the same challenge more than once"); }
     this.challenged = true;
