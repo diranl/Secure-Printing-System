@@ -9,7 +9,7 @@ h2. Getting Started
 * "Download":https://github.com/mojombo/jekyll/downloads the repo
 * Read about its "Usage":https://github.com/dannalieth/Secure-Printing-System/wiki/Usage
 
-h3. Dependencies
+h2. Dependencies
 
 * "NetBeans":http://netbeans.org/ (v6.9.1): Java IDE (possible to migrate out of)
 * "Civitas Codebase":http://www.cs.cornell.edu/projects/civitas/: ElGamal implementation
