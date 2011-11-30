@@ -13,6 +13,6 @@ h2. Dependencies
 
 * "NetBeans":http://netbeans.org/ (v6.9.1): Java IDE (possible to migrate out of)
 * "Civitas Codebase":http://www.cs.cornell.edu/projects/civitas/: ElGamal implementation
-* "Bouncy Castle":http://bouncycastle.org/: crypto implementations
+* "Bouncy Castle":http://bouncycastle.org/: Crypto implementation
 * "GSON":http://code.google.com/p/google-gson/: JSON serialization
 
