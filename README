@@ -1,1 +1,18 @@
-Initial repo for HTPS implementation
+h1. Oblivious Printing
+
+By Diran Li, Aleks Essex, and Urs Hengartner
+
+Oblivious Printing is a novel approach to document printing in which a set of printers print a secret message, in human or machine readable form, without learning the message.
+
+h2. Getting Started
+
+* "Download":https://github.com/mojombo/jekyll/downloads the repo
+* Read about its "Usage":https://github.com/dannalieth/Secure-Printing-System/wiki/Usage
+
+h3. Dependencies
+
+* NetBeans IDE: Java IDE (possible to migrate out of)
+* "Civitas Codebase":http://www.cs.cornell.edu/projects/civitas/: ElGamal implementation
+* "Bouncy Castle":http://bouncycastle.org/: crypto implementations
+* "GSON":http://code.google.com/p/google-gson/: JSON serialization
+

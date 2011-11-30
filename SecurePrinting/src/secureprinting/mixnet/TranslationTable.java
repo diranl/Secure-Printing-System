@@ -96,7 +96,7 @@ public class TranslationTable implements Serializable {
   }
 
   /**
-   * decryt: Decrypts encrypted table, CipherMessage becomes PlaintextMessage
+   * decrypt: Decrypts encrypted table, CipherMessage becomes PlaintextMessage
    * @return TranslationTable
    */
   public TranslationTable decrypt() throws CryptoException {
