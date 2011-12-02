@@ -7,11 +7,10 @@ Oblivious Printing is a novel approach to document printing in which a set of pr
 h2. Getting Started
 
 * "Download":https://github.com/dannalieth/Secure-Printing-System/downloads, "Fork":https://github.com/dannalieth/Secure-Printing-System/fork, or "Pull":https://github.com/dannalieth/Secure-Printing-System/pull/new/master the repo
-* Read about its "Usage":https://github.com/dannalieth/Secure-Printing-System/wiki/Usage
+* Read about its "Usage":https://github.com/dannalieth/Secure-Printing-System/wiki/Usage and its "Documentation":https://github.com/dannalieth/Secure-Printing-System/wiki/Documentation
 
-h2. Dependencies
+h2. Acknowledgements
 
-* "NetBeans":http://netbeans.org/ (v6.9.1): Java IDE (possible to migrate out of)
 * "Civitas Codebase":http://www.cs.cornell.edu/projects/civitas/: ElGamal implementation
 * "Bouncy Castle":http://bouncycastle.org/: Crypto implementation
 * "GSON":http://code.google.com/p/google-gson/: JSON serialization
